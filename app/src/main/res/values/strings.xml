@@ -1,0 +1,34 @@
+<resources>
+    <string name="auth_main_provider">dut.barry.com.dutfinance.provider.MainProvider</string>
+
+    <string name="app_name">DUTFinace</string>
+    <string name="action_settings">設定</string>
+    <string name="action_logout">登出</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_login">登入</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">帳號</string>
+    <string name="prompt_password">密碼</string>
+    <string name="action_sign_in">登入</string>
+    <string name="action_sign_in_short">登入</string>
+    <string name="error_invalid_email">錯誤的帳號</string>
+    <string name="error_invalid_password">無效的密碼</string>
+    <string name="error_incorrect_password">密碼錯誤</string>
+    <string name="error_field_required">此欄位不能留白</string>
+
+    <!-- Common -->
+    <string name="title_account">賬戶</string>
+    <string name="title_trade">下單</string>
+    <string name="title_history">歷史</string>
+
+    <!-- Profile -->
+    <string name="title_available_fund">餘額</string>
+    <string name="title_net_liq">淨值</string>
+    <string name="title_used_deposit">占用保證金</string>
+    <string name="title_available_deposit">可用保證金</string>
+
+    <!-- Order -->
+    <string name="title_order">下單</string>
+
+</resources>

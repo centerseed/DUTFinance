@@ -1,0 +1,13 @@
+gradle
+.gradle
+local.properties
+.idea
+.DS_Store
+build
+*.iml
+*.jar
+gradle-wrapper.properties
+gradlew
+gradlew.bat
+jniLibs
+*.aar
