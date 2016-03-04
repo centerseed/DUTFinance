@@ -30,5 +30,7 @@
 
     <!-- Order -->
     <string name="title_order">下單</string>
+    <string name="title_look_up">看漲</string>
+    <string name="title_look_down">看跌</string>
 
 </resources>

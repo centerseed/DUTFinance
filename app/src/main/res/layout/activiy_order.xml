@@ -31,15 +31,81 @@
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
         android:orientation="vertical">
-        <com.mikhaellopez.circularprogressbar.CircularProgressBar
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            app:cpb_background_progressbar_color="#FFCDD2"
-            app:cpb_background_progressbar_width="5dp"
-            app:cpb_progressbar_color="#F44336"
-            app:cpb_progressbar_width="10dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/margin_large" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_large">
+
+            <com.dut.dutfinace.CustomCircleProgressBar
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                app:cpb_background_progressbar_color="#f17777"
+                app:cpb_background_progressbar_width="20dp"
+                app:cpb_progressbar_color="#FFFFFF"
+                app:cpb_progressbar_width="20dp"
+                android:layout_gravity="center"
+                android:id="@+id/circleProgress" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="60"
+                android:id="@+id/second"
+                android:layout_gravity="center"
+                android:textSize="36dp" />
+        </FrameLayout>
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_large"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginRight="@dimen/margin_large"
+            android:orientation="horizontal"
+            android:id="@+id/group_look">
+
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/title_look_up"
+                android:id="@+id/lookup"
+                android:checked="false"
+                android:textSize="20dp"
+                android:layout_weight="1"
+                android:button="@color/colorTransparent"
+                android:background="@drawable/radio_up"
+                android:gravity="center"
+                android:padding="@dimen/margin_small"
+                android:textColor="@color/colorWhite" />
+
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/title_look_down"
+                android:id="@+id/lookdown"
+                android:checked="false"
+                android:textSize="20dp"
+                android:layout_weight="1"
+                android:button="@color/colorTransparent"
+                android:background="@drawable/radio_down"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:gravity="center"
+                android:padding="@dimen/margin_small"
+                android:textColor="@color/colorWhite" />
+        </RadioGroup>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GO!"
+            android:id="@+id/button"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_large"
+            android:onClick="startTimeProgress"
+            android:textSize="20dp" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
