@@ -1,10 +1,12 @@
-package com.dut.dutfinace;
+package com.dut.dutfinace.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.dut.dutfinace.R;
 
 public abstract class ToolbarActivity extends AppCompatActivity {
 

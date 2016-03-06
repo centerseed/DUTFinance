@@ -1,4 +1,4 @@
-package com.dut.dutfinace;
+package com.dut.dutfinace.activity;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -6,6 +6,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.dut.dutfinace.CustomCircleProgressBar;
+import com.dut.dutfinace.R;
 
 public class OrderActivity extends ToolbarActivity {
 

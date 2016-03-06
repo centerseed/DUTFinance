@@ -7,7 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
+
+import com.dut.dutfinace.activity.OrderActivity;
 
 public class TradeFragment extends Fragment {
 
@@ -15,7 +16,6 @@ public class TradeFragment extends Fragment {
     LinearLayout mTarget2;
     LinearLayout mTarget3;
     LinearLayout mTarget4;
-    RadioGroup group
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
