@@ -1,9 +1,6 @@
 package com.dut.dutfinace.network;
 
-import android.accounts.AccountManager;
 import android.content.Context;
-
-import com.dut.dutfinace.R;
 
 import org.json.JSONObject;
 
@@ -48,7 +45,8 @@ abstract public class AsyncResponseParser implements Callback {
         }
     }
 
-    public void onAuthFail() {}
+    public void onAuthFail() {
+    }
 
     public void setPostProcess(PostProcess process) {
         m_postProcess = process;

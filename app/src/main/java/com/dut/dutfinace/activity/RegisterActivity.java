@@ -1,7 +1,6 @@
 package com.dut.dutfinace.activity;
 
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -12,18 +11,10 @@ import android.widget.Toast;
 import com.dut.dutfinace.Const;
 import com.dut.dutfinace.R;
 
-import org.w3c.dom.Text;
-
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Headers;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class RegisterActivity extends ToolbarActivity {
 
@@ -185,10 +176,13 @@ public class RegisterActivity extends ToolbarActivity {
     }
 
     public void onRegister(View view) {
-        if (mErrorAccount.getVisibility() == View.VISIBLE || mAccount.getText().length() == 0) return;
-        if (mErrorPassword.getVisibility() == View.VISIBLE || mPassword.getText().length() == 0) return;
+        if (mErrorAccount.getVisibility() == View.VISIBLE || mAccount.getText().length() == 0)
+            return;
+        if (mErrorPassword.getVisibility() == View.VISIBLE || mPassword.getText().length() == 0)
+            return;
         if (mErrorPhoneOrMail.getVisibility() == View.VISIBLE) return;
-        if (mErrorCheckPassword.getVisibility() == View.VISIBLE || mCheckPassword.getText().length() == 0) return;
+        if (mErrorCheckPassword.getVisibility() == View.VISIBLE || mCheckPassword.getText().length() == 0)
+            return;
 
         if (mIdentity.getText().length() > 0 && checkIdentity(mIdentity.getText().toString()) == Const.SUCCESS)
             mErrorIdentity.setVisibility(View.GONE);
@@ -201,7 +195,7 @@ public class RegisterActivity extends ToolbarActivity {
             mErrorIdentity.setText(R.string.error_invalid_identity);
             return;
         }
-            mErrorIdentity.setVisibility(View.GONE);
+        mErrorIdentity.setVisibility(View.GONE);
 
         Toast.makeText(this, R.string.prompt_registering, Toast.LENGTH_SHORT).show();
        /* Request request = new Request.Builder()
