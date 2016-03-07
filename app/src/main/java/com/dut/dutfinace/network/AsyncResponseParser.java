@@ -13,12 +13,10 @@ import okhttp3.Response;
 abstract public class AsyncResponseParser implements Callback {
 
     protected Context m_context;
-    protected String m_token;
     protected PostProcess m_postProcess;
 
-    public AsyncResponseParser(Context c, String token) {
+    public AsyncResponseParser(Context c) {
         m_context = c;
-        m_token = token;
     }
 
     @Override

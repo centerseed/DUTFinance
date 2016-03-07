@@ -9,29 +9,36 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dut.dutfinace.Const;
+import com.dut.dutfinace.JSONBuilder;
 import com.dut.dutfinace.R;
+import com.dut.dutfinace.URLBuilder;
+import com.dut.dutfinace.network.AsyncResponseParser;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class RegisterActivity extends ToolbarActivity {
 
     private EditText mAccount;
     private EditText mPassword;
     private EditText mCheckPassword;
-    private EditText mName;
     private EditText mPhone;
     private EditText mMail;
-    private EditText LocalPhone;
     private EditText mIdentity;
 
     private TextView mErrorAccount;
     private TextView mErrorPassword;
     private TextView mErrorCheckPassword;
-    private TextView mErrorName;
-    private TextView mErrorPhone;
     private TextView mErrorPhoneOrMail;
     private TextView mErrorLocalPhone;
     private TextView mErrorIdentity;
@@ -50,19 +57,15 @@ public class RegisterActivity extends ToolbarActivity {
         mAccount = (EditText) findViewById(R.id.account);
         mPassword = (EditText) findViewById(R.id.password);
         mCheckPassword = (EditText) findViewById(R.id.re_password);
-        mName = (EditText) findViewById(R.id.name);
         mPhone = (EditText) findViewById(R.id.phone);
         mMail = (EditText) findViewById(R.id.mail);
-        LocalPhone = (EditText) findViewById(R.id.local_phone);
         mIdentity = (EditText) findViewById(R.id.identity);
 
         mErrorAccount = (TextView) findViewById(R.id.err_account);
         mErrorPassword = (TextView) findViewById(R.id.err_password);
         mErrorCheckPassword = (TextView) findViewById(R.id.err_check_password);
         mErrorAccount = (TextView) findViewById(R.id.err_account);
-        mErrorName = (TextView) findViewById(R.id.err_name);
         mErrorPhoneOrMail = (TextView) findViewById(R.id.err_mail_phone);
-        mErrorLocalPhone = (TextView) findViewById(R.id.err_local_phone);
         mErrorIdentity = (TextView) findViewById(R.id.err_identity);
 
         mGender = (Spinner) findViewById(R.id.gender);
@@ -117,18 +120,6 @@ public class RegisterActivity extends ToolbarActivity {
                     } else {
                         mErrorCheckPassword.setVisibility(View.GONE);
                     }
-                }
-            }
-        });
-
-        mName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (!b && mName.getText().length() == 0) {
-                    // show error
-                    mErrorName.setVisibility(View.VISIBLE);
-                } else if (!b && mName.getText().length() > 0) {
-                    mErrorName.setVisibility(View.GONE);
                 }
             }
         });
@@ -198,22 +189,26 @@ public class RegisterActivity extends ToolbarActivity {
         mErrorIdentity.setVisibility(View.GONE);
 
         Toast.makeText(this, R.string.prompt_registering, Toast.LENGTH_SHORT).show();
-       /* Request request = new Request.Builder()
-                .url("http://publicobject.com/helloworld.txt")
+
+        String json = new JSONBuilder().setParameter(
+                "user_id", mAccount.getText().toString(),
+                "pwd", mAccount.getText().toString(),
+                "mobil_phone", mAccount.getText().toString(),
+                "sex", mAccount.getText().toString()).build();
+
+        RequestBody body = RequestBody.create(Const.JSON, json);
+        Request request = new Request.Builder()
+                .url(new URLBuilder(RegisterActivity.this).path("").build().toString())
+                .post(body)
                 .build();
 
-        mClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
+        mClient.newCall(request).enqueue(new AsyncResponseParser(this) {
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-                System.out.println(response.body().string());
+            protected void parseResponse(JSONObject jsonObject) throws Exception {
+
             }
-        });*/
+        });
     }
 
     private int checkIdentity(String identity) {

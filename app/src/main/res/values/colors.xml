@@ -8,6 +8,6 @@
     <color name="colorDown">#6fc127</color>
     <color name="colorUnSelected">#AAAAAA</color>
     <color name="colorWhite">#FFFFFF</color>
-    <color name="colorRed">#AA0000</color>
+    <color name="colorRed">#fd5151</color>
     <color name="colorTransparent">#FFFFFFFF</color>
 </resources>

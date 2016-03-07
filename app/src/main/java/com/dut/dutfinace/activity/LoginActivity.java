@@ -19,7 +19,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.dut.dutfinace.AccountUtils;
+import com.dut.dutfinace.Const;
+import com.dut.dutfinace.JSONBuilder;
 import com.dut.dutfinace.R;
+import com.dut.dutfinace.URLBuilder;
+import com.dut.dutfinace.network.AsyncResponseParser;
+
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -36,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private TextView mRegister;
+    private final OkHttpClient mClient = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +142,36 @@ public class LoginActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             showProgress(true);
+
+         /*  String json = new JSONBuilder().setParameter(
+                    "user_id", email,
+                    "pwd", password).build();
+
+            RequestBody body = RequestBody.create(Const.JSON, json);
+            Request request = new Request.Builder()
+                    .url(new URLBuilder(LoginActivity.this).path("").build().toString())
+                    .post(body)
+                    .build();
+
+            mClient.newCall(request).enqueue(new AsyncResponseParser(this) {
+
+                @Override
+                protected void parseResponse(JSONObject jsonObject) throws Exception {
+                    boolean success = true;
+                    if (success) {
+                        AccountUtils.setToken(LoginActivity.this, "test token");
+                        AccountUtils.setAccount(LoginActivity.this, mEmailView.getText().toString(), mPasswordView.getText().toString());
+
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        mPasswordView.setError(getString(R.string.error_incorrect_password));
+                        mPasswordView.requestFocus();
+                    }
+                }
+            }); */
+
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
@@ -182,13 +226,22 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            try {
-                // Simulate network access.
+         /*   try {
+          RequestBody body = RequestBody.create(JSON, json);
+               Request request = new Request.Builder()
+                        .url(new URLBuilder(LoginActivity.this).host(R.string.top_server_url).path("api", "ib", "account-map").query("associatedID", account).build())
+                        .get()
+                        .post(body)
+                        .build();
+
+                Response response = mClient.newCall(request).execute();
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 return false;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
+*/
             return true;
         }
 
