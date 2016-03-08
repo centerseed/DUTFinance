@@ -12,6 +12,7 @@ public abstract class BaseContentProvider extends ContentProvider {
 
     private static final String TAG = "BaseContentProvider";
     public final static String FIELD_ID = "_id";
+    public final static String FIELD_EXPIRE = "_expire";
 
     public final static int EXPIRED_DEFAULT = 1000 * 60 * 5;
 

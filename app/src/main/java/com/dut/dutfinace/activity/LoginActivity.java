@@ -3,7 +3,9 @@ package com.dut.dutfinace.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import com.dut.dutfinace.JSONBuilder;
 import com.dut.dutfinace.R;
 import com.dut.dutfinace.URLBuilder;
 import com.dut.dutfinace.network.AsyncResponseParser;
+import com.dut.dutfinace.provider.MainProvider;
 
 import org.json.JSONObject;
 
@@ -94,14 +97,36 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponsePar
     protected void onResume() {
         super.onResume();
 
-        if (AccountUtils.getToken(this) != null) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
+        String account = AccountUtils.getAccount(this);
+        String password = AccountUtils.getPassword(this);
 
-        mEmailView.setText(AccountUtils.getAccount(this));
-        mPasswordView.setText(AccountUtils.getPassword(this));
+        mEmailView.setText(account);
+        mPasswordView.setText(password);
+
+        if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(password)) {
+            String json = new JSONBuilder().setParameter(
+                    "usersys_id", AccountUtils.getSysId(this),
+                    "session_id", AccountUtils.getToken(this)).build();
+
+            RequestBody body = RequestBody.create(Const.JSON, json);
+            String url = new URLBuilder(this).host(R.string.host).path("DUT", "api", "UserInfo").toString();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+
+            mClient.newCall(request).enqueue(new AsyncResponseParser(this) {
+
+                @Override
+                protected void parseResponse(final JSONObject obj) throws Exception {
+                    if (obj.optInt("session_status") == 1) {
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+            });
+        }
     }
 
     private void attemptLogin() {
@@ -158,6 +183,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponsePar
                             showProgress(false);
                             int resCode = jsonObject.optInt("login_code");
                             if (resCode == 1) {
+                                AccountUtils.setToken(LoginActivity.this, jsonObject.optString("session_id"));
                                 AccountUtils.setAccount(LoginActivity.this, mEmailView.getText().toString(), mPasswordView.getText().toString(), jsonObject.optString("usersys_id"));
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);

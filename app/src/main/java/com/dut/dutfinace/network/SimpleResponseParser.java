@@ -12,13 +12,8 @@ public class SimpleResponseParser extends BaseResponseParser {
     }
 
     @Override
-    protected void parse(String s) {
-        try {
-            m_jsonObj = new JSONObject(s);
-            m_String = s;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            m_jsonObj = new JSONObject(); // Dummy
-        }
+    protected void parse(JSONObject object) throws JSONException {
+
     }
+
 }

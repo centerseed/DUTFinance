@@ -42,7 +42,7 @@ public abstract class BaseResponseParser {
             try {
                 String body = response.body().string();
                 if (body != null) {
-                    parse(body);
+                    parse(new JSONObject(body));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -58,7 +58,7 @@ public abstract class BaseResponseParser {
         }
     }
 
-    protected abstract void parse(String s) throws JSONException;
+    protected abstract void parse(JSONObject object) throws JSONException;
 
     public class AuthFailException extends Exception {
     }

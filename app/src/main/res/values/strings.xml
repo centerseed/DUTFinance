@@ -1,5 +1,5 @@
 <resources>
-    <string name="auth_main_provider">dut.barry.com.dutfinance.provider.MainProvider</string>
+    <string name="auth_main_provider">com.dut.dutfinace.provider.MainProvider</string>
     <string name="host">http://52.192.233.73</string>
 
     <string name="app_name">DUTFinace</string>

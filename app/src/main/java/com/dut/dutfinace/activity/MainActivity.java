@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logout() {
-        AccountUtils.setToken(this, null);
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();

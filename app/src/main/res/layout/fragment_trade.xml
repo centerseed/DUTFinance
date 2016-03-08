@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="ERU &lt;-> USD"
-            android:id="@+id/textView2" />
+            android:id="@+id/currency1" />
     </LinearLayout>
 
     <LinearLayout
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="GBP &lt;-> JPY"
-            android:id="@+id/textView4" />
+            android:id="@+id/currency2" />
     </LinearLayout>
 
     <LinearLayout
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="GBP &lt;-> USD"
-            android:id="@+id/textView6" />
+            android:id="@+id/currency3" />
     </LinearLayout>
 
     <LinearLayout
@@ -65,6 +65,6 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="XAU &lt;-> USD"
-            android:id="@+id/textView8" />
+            android:id="@+id/currency4" />
     </LinearLayout>
 </LinearLayout>
