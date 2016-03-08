@@ -1,6 +1,7 @@
 package com.dut.dutfinace.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -39,14 +40,14 @@ public class RegisterActivity extends ToolbarActivity {
     private TextView mErrorAccount;
     private TextView mErrorPassword;
     private TextView mErrorCheckPassword;
-    private TextView mErrorPhoneOrMail;
-    private TextView mErrorLocalPhone;
+    private TextView mErrorMail;
+    private TextView mErrorPhone;
     private TextView mErrorIdentity;
 
     private Spinner mGender;
 
     private final OkHttpClient mClient = new OkHttpClient();
-    Pattern mPasswordPattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,30}$");
+    Pattern mPasswordPattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{3,20}$");
     private String[] genders = {"男", "女"};
 
     @Override
@@ -65,7 +66,8 @@ public class RegisterActivity extends ToolbarActivity {
         mErrorPassword = (TextView) findViewById(R.id.err_password);
         mErrorCheckPassword = (TextView) findViewById(R.id.err_check_password);
         mErrorAccount = (TextView) findViewById(R.id.err_account);
-        mErrorPhoneOrMail = (TextView) findViewById(R.id.err_mail_phone);
+        mErrorMail = (TextView) findViewById(R.id.err_mail);
+        mErrorPhone = (TextView) findViewById(R.id.err_password);
         mErrorIdentity = (TextView) findViewById(R.id.err_identity);
 
         mGender = (Spinner) findViewById(R.id.gender);
@@ -75,130 +77,62 @@ public class RegisterActivity extends ToolbarActivity {
         mAccount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if (!b) {
-                    if (mAccount.getText().length() == 0) {
-                        mErrorAccount.setVisibility(View.VISIBLE);
-                        mErrorAccount.setText(R.string.error_input_account);
-                    } else if (mAccount.getText().length() > 20) {
-                        mErrorAccount.setVisibility(View.VISIBLE);
-                        mErrorAccount.setText(R.string.error_account_length);
-                    } else {
-                        mErrorAccount.setVisibility(View.GONE);
-                    }
-                }
+                if (!b) checkAccount();
             }
         });
 
         mPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if (!b) {
-                    Matcher matcher = mPasswordPattern.matcher(mPassword.getText().toString());
-                    if (mPassword.getText().length() == 0) {
-                        mErrorPassword.setVisibility(View.VISIBLE);
-                        mErrorPassword.setText(R.string.error_input_password);
-                    } else if (!matcher.matches()) {
-                        mErrorPassword.setVisibility(View.VISIBLE);
-                        mErrorPassword.setText(R.string.error_password_format);
-                    } else {
-                        mErrorPassword.setVisibility(View.GONE);
-                    }
-                }
+                if (!b) checkPassword();
             }
         });
 
         mCheckPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if (!b) {
-                    if (mCheckPassword.getText().length() == 0) {
-                        mErrorCheckPassword.setVisibility(View.VISIBLE);
-                        mErrorCheckPassword.setText(R.string.error_input_password);
-                    } else if (!mCheckPassword.getText().toString().equals(mPassword.getText().toString())) {
-                        mErrorCheckPassword.setVisibility(View.VISIBLE);
-                        mErrorCheckPassword.setText(R.string.error_password_not_same);
-                    } else {
-                        mErrorCheckPassword.setVisibility(View.GONE);
-                    }
-                }
+                if (!b) checkRePassword();
             }
         });
 
         mPhone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if (!b && mPhone.getText().length() == 0 && mMail.getText().length() == 0) {
-                    // show error
-                    mErrorPhoneOrMail.setVisibility(View.VISIBLE);
-                } else if (!b && (mPhone.getText().length() > 0 || mMail.getText().length() > 0)) {
-                    mErrorPhoneOrMail.setVisibility(View.GONE);
-                }
+                if (!b) checkPhone();
             }
         });
 
         mMail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if (!b && mPhone.getText().length() == 0 && mMail.getText().length() == 0) {
-                    // show error
-                    mErrorPhoneOrMail.setVisibility(View.VISIBLE);
-                } else if (!b && (mPhone.getText().length() > 0 || mMail.getText().length() > 0)) {
-                    mErrorPhoneOrMail.setVisibility(View.GONE);
-                }
+                if (!b) checkMail();
             }
         });
 
         mIdentity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if (!b) {
-                    if (mIdentity.getText().length() > 0 && checkIdentity(mIdentity.getText().toString()) == Const.SUCCESS)
-                        mErrorIdentity.setVisibility(View.GONE);
-                    else if (mIdentity.getText().length() == 0) {
-                        mErrorIdentity.setVisibility(View.VISIBLE);
-                        mErrorIdentity.setText(R.string.error_input_identity);
-                    } else {
-                        mErrorIdentity.setVisibility(View.VISIBLE);
-                        mErrorIdentity.setText(R.string.error_invalid_identity);
-                    }
-                }
+                if (!b) checkIdentity();
             }
         });
     }
 
     public void onRegister(View view) {
-        if (mErrorAccount.getVisibility() == View.VISIBLE || mAccount.getText().length() == 0)
+        if (!checkAccount() || !checkPassword() || !checkRePassword() || !checkMail() || !checkPhone() || !checkIdentity())
             return;
-        if (mErrorPassword.getVisibility() == View.VISIBLE || mPassword.getText().length() == 0)
-            return;
-        if (mErrorPhoneOrMail.getVisibility() == View.VISIBLE) return;
-        if (mErrorCheckPassword.getVisibility() == View.VISIBLE || mCheckPassword.getText().length() == 0)
-            return;
-
-        if (mIdentity.getText().length() > 0 && checkIdentity(mIdentity.getText().toString()) == Const.SUCCESS)
-            mErrorIdentity.setVisibility(View.GONE);
-        else if (mIdentity.getText().length() == 0) {
-            mErrorIdentity.setVisibility(View.VISIBLE);
-            mErrorIdentity.setText(R.string.error_input_identity);
-            return;
-        } else {
-            mErrorIdentity.setVisibility(View.VISIBLE);
-            mErrorIdentity.setText(R.string.error_invalid_identity);
-            return;
-        }
-        mErrorIdentity.setVisibility(View.GONE);
 
         Toast.makeText(this, R.string.prompt_registering, Toast.LENGTH_SHORT).show();
 
         String json = new JSONBuilder().setParameter(
                 "user_id", mAccount.getText().toString(),
-                "pwd", mAccount.getText().toString(),
-                "mobil_phone", mAccount.getText().toString(),
-                "sex", mAccount.getText().toString()).build();
+                "pwd", mPassword.getText().toString(),
+                "mobil_phone", mPhone.getText().toString(),
+                "sex",(mGender.getSelectedItemPosition() + 1) + "").build();
 
         RequestBody body = RequestBody.create(Const.JSON, json);
+        String url = new URLBuilder(RegisterActivity.this).host(R.string.host).path("DUT", "api", "User", "Register").toString();
         Request request = new Request.Builder()
-                .url(new URLBuilder(RegisterActivity.this).path("").build().toString())
+                .url(url)
                 .post(body)
                 .build();
 
@@ -206,7 +140,7 @@ public class RegisterActivity extends ToolbarActivity {
 
             @Override
             protected void parseResponse(JSONObject jsonObject) throws Exception {
-
+                Log.d("Reg", jsonObject.toString());
             }
         });
     }
@@ -243,6 +177,83 @@ public class RegisterActivity extends ToolbarActivity {
         }
     }
 
+    private boolean checkAccount() {
+        if (mAccount.getText().length() == 0) {
+            mErrorAccount.setVisibility(View.VISIBLE);
+            mErrorAccount.setText(R.string.error_input_account);
+        } else if (mAccount.getText().length() > 20) {
+            mErrorAccount.setVisibility(View.VISIBLE);
+            mErrorAccount.setText(R.string.error_account_length);
+        } else {
+            mErrorAccount.setVisibility(View.GONE);
+            return  true;
+        }
+        return false;
+    }
+
+    public boolean checkPassword() {
+        Matcher matcher = mPasswordPattern.matcher(mPassword.getText().toString());
+        if (mPassword.getText().length() == 0) {
+            mErrorPassword.setVisibility(View.VISIBLE);
+            mErrorPassword.setText(R.string.error_input_password);
+        } else if (!matcher.matches()) {
+            mErrorPassword.setVisibility(View.VISIBLE);
+            mErrorPassword.setText(R.string.error_password_format);
+        } else {
+            mErrorPassword.setVisibility(View.GONE);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkRePassword() {
+        if (mCheckPassword.getText().length() == 0) {
+            mErrorCheckPassword.setVisibility(View.VISIBLE);
+            mErrorCheckPassword.setText(R.string.error_input_password);
+        } else if (!mCheckPassword.getText().toString().equals(mPassword.getText().toString())) {
+            mErrorCheckPassword.setVisibility(View.VISIBLE);
+            mErrorCheckPassword.setText(R.string.error_password_not_same);
+        } else {
+            mErrorCheckPassword.setVisibility(View.GONE);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkMail() {
+        if (mMail.getText().length() == 0) {
+            mErrorMail.setVisibility(View.VISIBLE);
+        } else {
+            mErrorMail.setVisibility(View.GONE);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkPhone() {
+        if (mPhone.getText().length() == 0) {
+            mErrorPhone.setVisibility(View.VISIBLE);
+        } else {
+            mErrorPhone.setVisibility(View.GONE);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkIdentity() {
+        if (mIdentity.getText().length() > 0 && checkIdentity(mIdentity.getText().toString()) == Const.SUCCESS) {
+            mErrorIdentity.setVisibility(View.GONE);
+            return true;
+        } else if (mIdentity.getText().length() == 0) {
+            mErrorIdentity.setVisibility(View.VISIBLE);
+            mErrorIdentity.setText(R.string.error_input_identity);
+        } else {
+            mErrorIdentity.setVisibility(View.VISIBLE);
+            mErrorIdentity.setText(R.string.error_invalid_identity);
+        }
+        return false;
+    }
+
     private int getAlphaCode(char a) {
         if (a == 'I') return 34;
         if (a == 'O') return 35;
@@ -252,5 +263,10 @@ public class RegisterActivity extends ToolbarActivity {
         if (a > 'O') offset = 2;
         int ascii = Integer.valueOf(a);
         return ascii - 55 - offset;
+    }
+
+    @Override
+    public void onNetError() {
+        Toast.makeText(this, R.string.net_error_io, Toast.LENGTH_LONG).show();
     }
 }

@@ -106,9 +106,20 @@
                 android:inputType="phone" />
         </android.support.design.widget.TextInputLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/error_input_phone"
+            android:id="@+id/textView10"
+            android:textColor="@color/colorRed"
+            android:visibility="gone"
+            android:layout_marginLeft="@dimen/margin_small" />
+
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/err_phone">
 
             <AutoCompleteTextView
                 android:id="@+id/phone"
@@ -124,8 +135,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/error_input_mail_phone"
-            android:id="@+id/err_mail_phone"
+            android:text="@string/error_input_mail"
+            android:id="@+id/err_mail"
             android:textColor="@color/colorRed"
             android:visibility="gone"
             android:layout_marginLeft="@dimen/margin_small" />

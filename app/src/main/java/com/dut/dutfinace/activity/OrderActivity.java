@@ -57,4 +57,9 @@ public class OrderActivity extends ToolbarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onNetError() {
+
+    }
 }

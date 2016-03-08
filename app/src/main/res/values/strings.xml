@@ -1,5 +1,6 @@
 <resources>
     <string name="auth_main_provider">dut.barry.com.dutfinance.provider.MainProvider</string>
+    <string name="host">http://52.192.233.73</string>
 
     <string name="app_name">DUTFinace</string>
     <string name="action_settings">設定</string>
@@ -46,15 +47,18 @@
     <string name="title_look_down">看跌</string>
     <string name="title_activity_register">RegisterActivity</string>
 
+    <!-- NetError -->
+    <string name="net_error_io">網路連線不穩，請檢察網路連線</string>
+
     <!-- Error -->
     <string name="error_input_account">請輸入帳號</string>
     <string name="error_account_length">帳號上限為20個字元</string>
     <string name="error_input_password">請輸入密碼</string>
-    <string name="error_password_format">密碼長度為6~30字元，必須包和至少一個大寫和數字</string>
+    <string name="error_password_format">密碼長度上限為20字元，必須包和至少一個大寫和數字</string>
     <string name="error_password_not_same">兩次密碼輸入不一致</string>
     <string name="error_input_name">請輸入名字</string>
-    <string name="error_input_mail_phone">請輸入手機或電子郵件</string>
-    <string name="error_require_phone_mail">手機或電子郵件並須擇一填寫</string>
+    <string name="error_input_phone">請輸入手機</string>
+    <string name="error_input_mail">請輸入電子郵件</string>
     <string name="error_invalid_mail_phone">無效的手機或電子郵件</string>
     <string name="error_invalid_local_phone">無效的家用電話</string>
     <string name="error_input_identity">請輸入身份證字號</string>

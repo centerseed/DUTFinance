@@ -4,9 +4,10 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 
 public class AccountUtils {
-    public static void setAccount(Context context, String account, String password) {
+    public static void setAccount(Context context, String account, String password,String sysId) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString("account", account).commit();
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString("password", password).commit();
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString("sysId", sysId).commit();
     }
 
     public static String getAccount(Context context) {
@@ -15,6 +16,10 @@ public class AccountUtils {
 
     public static String getPassword(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString("password", "");
+    }
+
+    public static String getSysId(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString("sysId", "");
     }
 
     public static void setToken(Context context, String token) {

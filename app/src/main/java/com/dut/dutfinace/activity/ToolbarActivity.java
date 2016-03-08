@@ -7,8 +7,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.dut.dutfinace.R;
+import com.dut.dutfinace.network.AsyncResponseParser;
 
-public abstract class ToolbarActivity extends AppCompatActivity {
+public abstract class ToolbarActivity extends AppCompatActivity implements AsyncResponseParser.NetError {
 
     private static final String TAG = "ToolbarActivity";
 

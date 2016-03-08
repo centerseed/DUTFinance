@@ -14,6 +14,7 @@ abstract public class AsyncResponseParser implements Callback {
 
     protected Context m_context;
     protected PostProcess m_postProcess;
+    protected NetError m_netError;
 
     public AsyncResponseParser(Context c) {
         m_context = c;
@@ -21,7 +22,7 @@ abstract public class AsyncResponseParser implements Callback {
 
     @Override
     public void onFailure(Call call, IOException e) {
-
+        if (m_netError != null) m_netError.onNetError();
     }
 
     @Override
@@ -50,9 +51,17 @@ abstract public class AsyncResponseParser implements Callback {
         m_postProcess = process;
     }
 
+    public void setNetError(NetError error) {
+        m_netError = error;
+    }
+
     protected abstract void parseResponse(JSONObject jsonObject) throws Exception;
 
     public interface PostProcess {
         void onPostProcess();
+    }
+
+    public interface NetError {
+        void onNetError();
     }
 }
