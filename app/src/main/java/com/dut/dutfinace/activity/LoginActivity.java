@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +18,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dut.dutfinace.AccountUtils;
 import com.dut.dutfinace.Const;
@@ -40,8 +42,6 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponsePar
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
-
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -105,9 +105,6 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponsePar
     }
 
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         mEmailView.setError(null);
@@ -132,10 +129,6 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponsePar
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
         }
 
         if (cancel) {
@@ -143,42 +136,41 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponsePar
         } else {
             showProgress(true);
 
-         /*  String json = new JSONBuilder().setParameter(
+            String json = new JSONBuilder().setParameter(
                     "user_id", email,
                     "pwd", password).build();
 
             RequestBody body = RequestBody.create(Const.JSON, json);
+            String url = new URLBuilder(LoginActivity.this).host(R.string.host).path("DUT", "api", "Login").toString();
             Request request = new Request.Builder()
-                    .url(new URLBuilder(LoginActivity.this).path("").build().toString())
+                    .url(url)
                     .post(body)
                     .build();
 
             mClient.newCall(request).enqueue(new AsyncResponseParser(this) {
 
                 @Override
-                protected void parseResponse(JSONObject jsonObject) throws Exception {
-                    boolean success = true;
-                    if (success) {
-                        AccountUtils.setToken(LoginActivity.this, "test token");
-                        AccountUtils.setAccount(LoginActivity.this, mEmailView.getText().toString(), mPasswordView.getText().toString());
-
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        mPasswordView.setError(getString(R.string.error_incorrect_password));
-                        mPasswordView.requestFocus();
-                    }
+                protected void parseResponse(final JSONObject jsonObject) throws Exception {
+                    if (mEmailView != null) mEmailView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("Login", jsonObject.toString());
+                            showProgress(false);
+                            int resCode = jsonObject.optInt("login_code");
+                            if (resCode == 1) {
+                                AccountUtils.setAccount(LoginActivity.this, mEmailView.getText().toString(), mPasswordView.getText().toString(), jsonObject.optString("usersys_id"));
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            } else if (resCode == 2) {
+                                Toast.makeText(LoginActivity.this, "登入失敗", Toast.LENGTH_SHORT).show();
+                            } else if (resCode == 3) {
+                                Toast.makeText(LoginActivity.this, "超過登入數量（最多支援兩個裝置同時登入）", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
-            }); */
-
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            });
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
@@ -215,64 +207,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponsePar
 
     @Override
     public void onNetError() {
-
-    }
-
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-         /*   try {
-          RequestBody body = RequestBody.create(JSON, json);
-               Request request = new Request.Builder()
-                        .url(new URLBuilder(LoginActivity.this).host(R.string.top_server_url).path("api", "ib", "account-map").query("associatedID", account).build())
-                        .get()
-                        .post(body)
-                        .build();
-
-                Response response = mClient.newCall(request).execute();
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-*/
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                AccountUtils.setToken(LoginActivity.this, "test token");
-                AccountUtils.setAccount(LoginActivity.this, mEmailView.getText().toString(), mPasswordView.getText().toString(), "sysId");
-
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
+        showProgress(false);
     }
 }
 

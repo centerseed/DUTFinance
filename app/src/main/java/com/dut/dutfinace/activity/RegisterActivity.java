@@ -1,5 +1,7 @@
 package com.dut.dutfinace.activity;
 
+import android.accounts.AccountManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dut.dutfinace.AccountUtils;
 import com.dut.dutfinace.Const;
 import com.dut.dutfinace.JSONBuilder;
 import com.dut.dutfinace.R;
@@ -139,8 +142,23 @@ public class RegisterActivity extends ToolbarActivity {
         mClient.newCall(request).enqueue(new AsyncResponseParser(this) {
 
             @Override
-            protected void parseResponse(JSONObject jsonObject) throws Exception {
-                Log.d("Reg", jsonObject.toString());
+            protected void parseResponse(final JSONObject jsonObject) throws Exception {
+                if (mAccount != null) mAccount.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("Reg", jsonObject.toString());
+                        int resCode = jsonObject.optInt("reg_code");
+                        if (resCode == 1) {
+                            AccountUtils.setAccount(RegisterActivity.this, mAccount.getText().toString(), mPassword.getText().toString(), jsonObject.optString("usersys_id"));
+                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                            startActivity(intent);
+                        } else if (resCode == 2) {
+                            Toast.makeText(RegisterActivity.this, "註冊失敗", Toast.LENGTH_SHORT).show();
+                        } else if (resCode == 3) {
+                            Toast.makeText(RegisterActivity.this, "身分證號碼已經註冊過", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
     }
