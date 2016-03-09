@@ -26,8 +26,15 @@ public class AccountUtils {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString("token", token).commit();
     }
 
-
     public static String getToken(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString("token", null);
+    }
+
+    public static void setMaxOrderFund(Context context, int max) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("max_order_size", max).commit();
+    }
+
+    public static int getMaxOrderFund(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt("max_order_size", 10);
     }
 }

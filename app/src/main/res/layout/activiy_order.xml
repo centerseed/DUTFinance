@@ -32,79 +32,118 @@
         android:orientation="vertical">
 
         <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_large">
-
-            <com.dut.dutfinace.CustomCircleProgressBar
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                app:cpb_background_progressbar_color="#f17777"
-                app:cpb_background_progressbar_width="20dp"
-                app:cpb_progressbar_color="#FFFFFF"
-                app:cpb_progressbar_width="20dp"
-                android:layout_gravity="center"
-                android:id="@+id/circleProgress" />
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="60"
-                android:id="@+id/second"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="108.25"
+                android:id="@+id/textView2"
                 android:layout_gravity="center"
-                android:textSize="36dp" />
+                android:textSize="48dp" />
         </FrameLayout>
 
-        <RadioGroup
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_large"
-            android:layout_marginLeft="@dimen/margin_large"
-            android:layout_marginRight="@dimen/margin_large"
-            android:orientation="horizontal"
-            android:id="@+id/group_look">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-            <RadioButton
-                android:layout_width="0dp"
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Medium Text"
+                    android:id="@+id/currency"
+                    android:layout_marginLeft="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/title_profit_rate"
+                    android:id="@+id/win_rate"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rect_gray">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/title_use_fund"
+                        android:id="@+id/textView4"
+                        android:layout_weight="2"
+                        android:layout_marginLeft="16dp"
+                        android:textColor="@android:color/black" />
+
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberSigned"
+                        android:ems="10"
+                        android:id="@+id/amount"
+                        android:layout_weight="3" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="10"
+                        android:id="@+id/textView6"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:layout_marginRight="8dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <Button
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/title_look_up"
                 android:id="@+id/lookup"
-                android:checked="false"
-                android:textSize="20dp"
-                android:layout_weight="1"
-                android:button="@color/colorTransparent"
-                android:background="@drawable/radio_up"
-                android:gravity="center"
-                android:padding="@dimen/margin_small"
-                android:textColor="@color/colorWhite" />
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/rect_green"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:onClick="onLookUp" />
 
-            <RadioButton
-                android:layout_width="0dp"
+            <Button
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/title_look_down"
                 android:id="@+id/lookdown"
-                android:checked="false"
-                android:textSize="20dp"
-                android:layout_weight="1"
-                android:button="@color/colorTransparent"
-                android:background="@drawable/radio_down"
-                android:layout_marginLeft="@dimen/margin_large"
-                android:gravity="center"
-                android:padding="@dimen/margin_small"
-                android:textColor="@color/colorWhite" />
-        </RadioGroup>
+                android:layout_gravity="center_horizontal"
+                android:text="@string/title_look_down"
+                android:background="@drawable/rect_red"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginLeft="50dp"
+                android:onClick="onLookDown" />
+        </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="GO!"
-            android:id="@+id/button"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_large"
-            android:onClick="startTimeProgress"
-            android:textSize="20dp" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -45,6 +45,8 @@
     <string name="title_order">下單</string>
     <string name="title_look_up">看漲</string>
     <string name="title_look_down">看跌</string>
+    <string name="title_use_fund">投入資金</string>
+    <string name="title_profit_rate">獲利比率</string>
     <string name="title_activity_register">RegisterActivity</string>
 
     <!-- NetError -->

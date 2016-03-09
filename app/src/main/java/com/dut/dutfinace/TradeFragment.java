@@ -51,40 +51,9 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTarget1 = (LinearLayout) view.findViewById(R.id.target1);
-        mTarget1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), OrderActivity.class);
-                getContext().startActivity(intent);
-            }
-        });
-
         mTarget2 = (LinearLayout) view.findViewById(R.id.target2);
-        mTarget2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), OrderActivity.class);
-                getContext().startActivity(intent);
-            }
-        });
-
         mTarget3 = (LinearLayout) view.findViewById(R.id.target3);
-        mTarget3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), OrderActivity.class);
-                getContext().startActivity(intent);
-            }
-        });
-
         mTarget4 = (LinearLayout) view.findViewById(R.id.target4);
-        mTarget4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), OrderActivity.class);
-                getContext().startActivity(intent);
-            }
-        });
 
         mCurrency1 = (TextView) view.findViewById(R.id.currency1);
         mCurrency2 = (TextView) view.findViewById(R.id.currency2);
@@ -146,10 +115,26 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 String name = cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_NAME));
-                if (cursor.getPosition() == 0) mCurrency1.setText(name);
-                if (cursor.getPosition() == 1) mCurrency2.setText(name);
-                if (cursor.getPosition() == 2) mCurrency3.setText(name);
-                if (cursor.getPosition() == 3) mCurrency4.setText(name);
+                if (cursor.getPosition() == 0)  {
+                    mCurrency1.setText(name);
+                    mCurrency1.setTag(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_ID)));
+                    mTarget1.setOnClickListener(new clickListener(name));
+                }
+                if (cursor.getPosition() == 1) {
+                    mCurrency2.setText(name);
+                    mCurrency2.setTag(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_ID)));
+                    mTarget2.setOnClickListener(new clickListener(name));
+                }
+                if (cursor.getPosition() == 2) {
+                    mCurrency3.setText(name);
+                    mCurrency3.setTag(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_ID)));
+                    mTarget3.setOnClickListener(new clickListener(name));
+                }
+                if (cursor.getPosition() == 3) {
+                    mCurrency4.setText(name);
+                    mCurrency4.setTag(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_ID)));
+                    mTarget4.setOnClickListener(new clickListener(name));
+                }
 
                 cursor.moveToNext();
             }
@@ -159,5 +144,21 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    public class clickListener implements View.OnClickListener {
+        String  mName;
+
+        public clickListener(String name) {
+            mName = name;
+        }
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getActivity(), OrderActivity.class);
+            intent.putExtra(OrderActivity.ARG_TARGET_ID, (String)view.getTag());
+            intent.putExtra(OrderActivity.ARG_TARGET_NAME, mName);
+            getContext().startActivity(intent);
+        }
     }
 }

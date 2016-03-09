@@ -80,6 +80,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                     return;
                 }
 
+                AccountUtils.setMaxOrderFund(getContext(), obj.optInt("bet_max"));
                 m_context.getContentResolver().delete(mUri, MainProvider.FIELD_ID + ">=?", new String[]{"0"});
 
                 ContentValues values = new ContentValues();
