@@ -8,6 +8,7 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_login">登入</string>
     <string name="title_register">註冊帳號</string>
+    <string name="title_sync">更新</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">帳號</string>

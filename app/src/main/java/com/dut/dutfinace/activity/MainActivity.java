@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dut.dutfinace.AccountUtils;
+import com.dut.dutfinace.HistoryFragment;
 import com.dut.dutfinace.ProfileFragment;
 import com.dut.dutfinace.R;
 import com.dut.dutfinace.TradeFragment;
@@ -85,8 +86,10 @@ public class MainActivity extends AppCompatActivity {
                     return new ProfileFragment();
                 case 1:
                     return new TradeFragment();
+                case 2:
+                    return new HistoryFragment();
             }
-            return PlaceholderFragment.newInstance(position + 1);
+            return null;
         }
 
         @Override
@@ -112,31 +115,6 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < 3; i++) {
           //  TextView tab = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
           //  tabLayout.getTabAt(0).setCustomView(tab);
-        }
-    }
-
-    public static class PlaceholderFragment extends Fragment {
-
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
         }
     }
 }

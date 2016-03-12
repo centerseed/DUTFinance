@@ -4,8 +4,8 @@
     <color name="colorPrimaryDark">#0d0d0d</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="colorUp">#d7502b</color>
-    <color name="colorDown">#2aab2e</color>
+    <color name="colorDown">#d7502b</color>
+    <color name="colorUp">#2aab2e</color>
     <color name="colorUnSelected">#AAAAAA</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorRed">#fd5151</color>

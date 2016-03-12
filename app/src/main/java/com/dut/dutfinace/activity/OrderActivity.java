@@ -1,5 +1,6 @@
 package com.dut.dutfinace.activity;
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,22 +14,39 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dut.dutfinace.AccountUtils;
+import com.dut.dutfinace.Const;
 import com.dut.dutfinace.CustomCircleProgressBar;
+import com.dut.dutfinace.JSONBuilder;
 import com.dut.dutfinace.R;
+import com.dut.dutfinace.URLBuilder;
+import com.dut.dutfinace.network.AsyncResponseParser;
+import com.dut.dutfinace.provider.MainProvider;
+
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 public class OrderActivity extends ToolbarActivity {
 
     public static final String ARG_TARGET_NAME = "target_name";
     public static final String ARG_TARGET_ID = "target_id";
+    public static final String ARG_EXCHANGE_RATE = "exchange_rate";
+    public static final String ARG_AMOUNT = "amount";
     public static final String ARG_SIDE = "side";
 
     public static final int SIDE_UP = 0;
-    public static final int SIDE_DOWN = 0;
+    public static final int SIDE_DOWN = 1;
 
     TextView mCurrency;
     EditText mAmount;
     String mName;
     String mId;
+    private final OkHttpClient mClient = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +72,11 @@ public class OrderActivity extends ToolbarActivity {
     }
 
     public void onLookUp(View v) {
-        showOrderDialog(0);
+        showOrderDialog(SIDE_UP);
     }
 
     public void onLookDown(View v) {
-        showOrderDialog(1);
+        showOrderDialog(SIDE_DOWN);
     }
 
     protected void showOrderDialog(final int side) {
@@ -98,12 +116,59 @@ public class OrderActivity extends ToolbarActivity {
                 .show();
     }
 
-    private void makeOrder(int amount, int side) {
-        Intent intent = new Intent(OrderActivity.this, CountdownActivity.class);
-        intent.putExtra(ARG_TARGET_NAME, mName);
-        intent.putExtra(ARG_TARGET_ID, mId);
-        intent.putExtra(ARG_SIDE, side);
-        startActivity(intent);
-        OrderActivity.this.finish();
+    private void makeOrder(int amount, final int side) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");
+        String time = formatter.format(new Date(System.currentTimeMillis()));
+
+        String json = new JSONBuilder().setParameter(
+                "usersys_id", AccountUtils.getSysId(this),
+                "session_id", AccountUtils.getToken(this),
+                "currencysys_id", mId,
+                "invest_amount", amount + "",
+                "invest_time", time,
+                "change", side + ""
+                ).build();
+
+        RequestBody body = RequestBody.create(Const.JSON, json);
+        String url = new URLBuilder(this).host(R.string.host).path("DUT", "api", "Invest").toString();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        mClient.newCall(request).enqueue(new AsyncResponseParser(this) {
+
+            @Override
+            protected void parseResponse(final JSONObject obj) throws Exception {
+
+                mCurrency.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (obj.optInt("session_status") == 2) {
+                            Intent intent = new Intent(OrderActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            return;
+                        }
+
+                        int result = obj.optInt("invest_code");
+                        if (result == 1) {
+                            Intent intent = new Intent(OrderActivity.this, CountdownActivity.class);
+                            intent.putExtra(ARG_TARGET_NAME, mName);
+                            intent.putExtra(ARG_TARGET_ID, mId);
+                            intent.putExtra(ARG_EXCHANGE_RATE, obj.optDouble("start_price"));
+                            intent.putExtra(ARG_AMOUNT, obj.optInt("invest_amount"));
+                            intent.putExtra(ARG_SIDE, side);
+                            startActivity(intent);
+                            OrderActivity.this.finish();
+                        } else if (result == 2) {
+                            Toast.makeText(OrderActivity.this, "下單金額超過最大下單金額", Toast.LENGTH_LONG);
+                        } else {
+                            Toast.makeText(OrderActivity.this, "下單金額超過帳戶餘額", Toast.LENGTH_LONG);
+                        }
+                    }
+                });
+            }
+        });
     }
 }

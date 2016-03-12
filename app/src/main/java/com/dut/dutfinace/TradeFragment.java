@@ -26,7 +26,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class TradeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TradeFragment extends SyncFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     LinearLayout mTarget1;
     LinearLayout mTarget2;
@@ -62,10 +62,8 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        getLoaderManager().initLoader(0, null, this);
-
+    void onSync() {
+        runRefresh();
         String json = new JSONBuilder().setParameter(
                 "usersys_id", AccountUtils.getSysId(getContext()),
                 "session_id", AccountUtils.getToken(getContext())).build();
@@ -104,6 +102,14 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().initLoader(0, null, this);
+
+        onSync();
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         CursorLoader cl = new CursorLoader(getActivity());
         cl.setUri(mUri);
@@ -113,6 +119,7 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.moveToFirst()) {
+            stopRefresh();
             while (!cursor.isAfterLast()) {
                 String name = cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_NAME));
                 if (cursor.getPosition() == 0)  {

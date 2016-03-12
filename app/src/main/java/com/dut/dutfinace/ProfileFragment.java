@@ -28,7 +28,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 
-public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ProfileFragment extends SyncFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     TextView mFunds;
     TextView mNetLiqs;
@@ -53,10 +53,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        getLoaderManager().initLoader(0, null, this);
-
+    void onSync() {
+        runRefresh();
         String json = new JSONBuilder().setParameter(
                 "usersys_id", AccountUtils.getSysId(getContext()),
                 "session_id", AccountUtils.getToken(getContext())).build();
@@ -94,6 +92,14 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().initLoader(0, null, this);
+
+        onSync();
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         CursorLoader cl = new CursorLoader(getActivity());
         cl.setUri(mUri);
@@ -105,6 +111,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         if (cursor != null && cursor.moveToFirst()) {
             String total = cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_AVAILABLE_FUND));
             mFunds.setText(total);
+            stopRefresh();
         }
     }
 

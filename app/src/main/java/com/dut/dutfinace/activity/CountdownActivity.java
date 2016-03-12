@@ -1,11 +1,13 @@
 package com.dut.dutfinace.activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dut.dutfinace.CustomCircleProgressBar;
@@ -17,6 +19,14 @@ public class CountdownActivity extends ToolbarActivity {
     CustomCircleProgressBar mCircularProgressBar;
     FrameLayout mProgressBackground;
     TextView mSecond;
+    TextView mSide;
+    TextView mName;
+    TextView mExchangeRate;
+    TextView mAmount;
+    ImageView mDivider;
+
+    int mColor;
+
     boolean mOrdering = false;
 
     @Override
@@ -24,16 +34,34 @@ public class CountdownActivity extends ToolbarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_countdown);
         mSecond = (TextView) findViewById(R.id.second);
+        mName = (TextView) findViewById(R.id.name);
+        mSide = (TextView) findViewById(R.id.side);
+        mExchangeRate = (TextView) findViewById(R.id.exchange_rate);
+        mAmount = (TextView) findViewById(R.id.amount);
         mProgressBackground = (FrameLayout) findViewById(R.id.progressBack);
+        mDivider = (ImageView) findViewById(R.id.divider);
+
+        mName.setText(getIntent().getStringExtra(OrderActivity.ARG_TARGET_NAME));
+        mSide.setText(getIntent().getIntExtra(OrderActivity.ARG_SIDE, 0) == 0 ? "看漲" : "看跌");
+        mExchangeRate.setText(getIntent().getDoubleExtra(OrderActivity.ARG_EXCHANGE_RATE, 1) + "");
+        mAmount.setText(getIntent().getIntExtra(OrderActivity.ARG_AMOUNT, 10) + "");
 
         startTimeProgress();
 
         int side = getIntent().getIntExtra(OrderActivity.ARG_SIDE, 0);
         if (side == OrderActivity.SIDE_UP) {
+            mColor = getResources().getColor(R.color.colorUp);
             mProgressBackground.setBackgroundResource(R.drawable.rect_green);
         } else {
+            mColor = getResources().getColor(R.color.colorDown);
             mProgressBackground.setBackgroundResource(R.drawable.rect_red);
         }
+
+        mName.setTextColor(mColor);
+        mSide.setTextColor(mColor);
+        mExchangeRate.setTextColor(mColor);
+        mAmount.setTextColor(mColor);
+        mDivider.setBackgroundColor(mColor);
     }
 
     @Override
