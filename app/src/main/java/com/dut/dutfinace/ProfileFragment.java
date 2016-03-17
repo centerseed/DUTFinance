@@ -71,13 +71,6 @@ public class ProfileFragment extends SyncFragment implements LoaderManager.Loade
             @Override
             protected void parseResponse(final JSONObject obj) throws Exception {
 
-                if (obj.optInt("session_status") == 2) {
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
-                    return;
-                }
-
                 AccountUtils.setMaxOrderFund(getContext(), obj.optInt("bet_max"));
                 m_context.getContentResolver().delete(mUri, MainProvider.FIELD_ID + ">=?", new String[]{"0"});
 

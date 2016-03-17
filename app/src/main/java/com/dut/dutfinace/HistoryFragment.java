@@ -13,6 +13,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.dut.dutfinace.adapter.HistoryAdapter;
 import com.dut.dutfinace.network.AsyncResponseParser;
@@ -29,8 +32,12 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
 
     Uri mUri;
     HistoryAdapter mAdapter;
+    Spinner mSpinner;
     protected RecyclerView mRecyclerView;
     private final OkHttpClient mClient = new OkHttpClient();
+
+    private String[] interval = {"ㄧ日", "一週", "ㄧ月"};
+    int mInterval = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,6 +62,23 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
             mRecyclerView.setAdapter(mAdapter);
         }
+
+        mSpinner = (Spinner) view.findViewById(R.id.spinner);
+        ArrayAdapter<String> lunchList = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, interval);
+        mSpinner.setAdapter(lunchList);
+
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mInterval = i + 1;
+                onSync();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     @Override
@@ -63,7 +87,7 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
         String json = new JSONBuilder().setParameter(
                 "usersys_id", AccountUtils.getSysId(getContext()),
                 "session_id", AccountUtils.getToken(getContext()),
-                "history_type", 1 + "").build();
+                "history_type", mInterval + "").build();
 
         RequestBody body = RequestBody.create(Const.JSON, json);
         String url = new URLBuilder(getContext()).host(R.string.host).path("DUT", "api", "History").toString();

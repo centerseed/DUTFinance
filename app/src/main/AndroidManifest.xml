@@ -51,6 +51,12 @@
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <service
+            android:name=".streaming.CurrencyService"
+            android:exported="true"
+            android:process=":streaming">
+        </service>
     </application>
 
 </manifest>

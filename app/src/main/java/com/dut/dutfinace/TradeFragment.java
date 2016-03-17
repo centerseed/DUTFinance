@@ -1,7 +1,10 @@
 package com.dut.dutfinace;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,15 +12,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dut.dutfinace.activity.LoginActivity;
 import com.dut.dutfinace.activity.OrderActivity;
 import com.dut.dutfinace.network.AsyncResponseParser;
 import com.dut.dutfinace.provider.MainProvider;
+import com.dut.dutfinace.streaming.CurrencyService;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,6 +46,7 @@ public class TradeFragment extends SyncFragment implements LoaderManager.LoaderC
 
     Uri mUri;
     private final OkHttpClient mClient = new OkHttpClient();
+    BroadcastReceiver mReceiver;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,7 +89,12 @@ public class TradeFragment extends SyncFragment implements LoaderManager.LoaderC
                 Uri uri = MainProvider.getProviderUri(m_context.getString(R.string.auth_main_provider), MainProvider.TABLE_CURRENCY);
 
                 int sessionStatus = obj.optInt("session_status");
-                if (sessionStatus == 2) return;
+                if (obj.optInt("session_status") == 2) {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                    return;
+                }
 
                 JSONArray array = obj.getJSONArray("currencyInfoList");
                 m_context.getContentResolver().delete(uri, MainProvider.FIELD_ID + ">=?", new String[]{"0"});
@@ -104,9 +116,21 @@ public class TradeFragment extends SyncFragment implements LoaderManager.LoaderC
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(0, null, this);
+        mReceiver = new Receiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(CurrencyService.ACTION_UPDATE);
+        getActivity().registerReceiver(mReceiver, filter);
 
+        getLoaderManager().initLoader(0, null, this);
         onSync();
+        startStreaming();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(mReceiver);
+        stopStreaming();
     }
 
     @Override
@@ -166,6 +190,29 @@ public class TradeFragment extends SyncFragment implements LoaderManager.LoaderC
             intent.putExtra(OrderActivity.ARG_TARGET_ID, (String)view.getTag());
             intent.putExtra(OrderActivity.ARG_TARGET_NAME, mName);
             getContext().startActivity(intent);
+        }
+    }
+
+    private void startStreaming() {
+        Intent intent = new Intent(getActivity(), CurrencyService.class);
+        intent.setAction(CurrencyService.ARG_START_CONNECT);
+        getActivity().startService(intent);
+    }
+
+    private void stopStreaming() {
+        Intent intent = new Intent(getActivity(), CurrencyService.class);
+        intent.setAction(CurrencyService.ARG_DISCONNECT);
+        getActivity().startService(intent);
+    }
+
+    private class Receiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (null == intent) return;
+            if (CurrencyService.ACTION_UPDATE.equals(intent.getAction())) {
+                Log.d("TradeFragment", intent.getDoubleExtra(CurrencyService.ACTION_UPDATE, 0) + "");
+            }
         }
     }
 }

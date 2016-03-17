@@ -9,6 +9,7 @@ public class MainProvider extends BaseContentProvider {
     public final static String TABLE_PROFILE = "_table_profile";
     public final static String TABLE_CURRENCY = "_table_currency";
     public final static String TABLE_HISTORY = "_table_trade_history";
+    public final static String TABLE_CHART = "_table_chart";
 
     public final static String FIELD_AVAILABLE_FUND = "_available_fund";
     public final static String FIELD_NET_LIQ = "_net_liq";
@@ -26,6 +27,9 @@ public class MainProvider extends BaseContentProvider {
     public final static String FIELD_END_TIME = "_end_type";
     public final static String FIELD_END_PRICE = "_end_price";
     public final static String FIELD_INVEST_RESULT = "_invest_result";
+
+    public final static String FIELD_CHART_DATA = "_chart_data";
+    public final static String FIELD_CHART_INTERVAL = "_chart_interval";
 
     @Override
     public boolean onCreate() {
@@ -72,6 +76,13 @@ public class MainProvider extends BaseContentProvider {
                     + FIELD_END_PRICE + " FLOAT, "
                     + FIELD_INVEST_RESULT + " TEXT "
                     + ");");
+
+            db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_CHART + " ( "
+                    + FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + FIELD_EXPIRE + " INTEGER, "
+                    + FIELD_CHART_DATA + " TEXT, "
+                    + FIELD_CHART_INTERVAL + " TEXT "
+                    + ");");
         }
 
         @Override
@@ -79,6 +90,7 @@ public class MainProvider extends BaseContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROFILE);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CURRENCY);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_HISTORY);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHART);
             onCreate(db);
         }
     }
