@@ -139,7 +139,7 @@ public class RegisterActivity extends ToolbarActivity {
                 .post(body)
                 .build();
 
-        mClient.newCall(request).enqueue(new AsyncResponseParser(this) {
+        mClient.newCall(request).enqueue(new AsyncResponseParser(this, this) {
 
             @Override
             protected void parseResponse(final JSONObject jsonObject) throws Exception {
@@ -149,6 +149,7 @@ public class RegisterActivity extends ToolbarActivity {
                         Log.d("Reg", jsonObject.toString());
                         int resCode = jsonObject.optInt("reg_code");
                         if (resCode == 1) {
+                            AccountUtils.setToken(RegisterActivity.this, jsonObject.optString("session_id"));
                             AccountUtils.setAccount(RegisterActivity.this, mAccount.getText().toString(), mPassword.getText().toString(), jsonObject.optString("usersys_id"));
                             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(intent);

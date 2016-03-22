@@ -46,7 +46,8 @@ public abstract class BaseContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String whereClause, String[] whereArgs) {
-        return m_db.getWritableDatabase().update(getTable(uri), values, whereClause, whereArgs);
+        int result =  m_db.getWritableDatabase().update(getTable(uri), values, whereClause, whereArgs);
+        return result;
     }
 
     protected String getTable(Uri uri) {

@@ -39,7 +39,7 @@ public class MainProvider extends BaseContentProvider {
 
     private class MainDatabase extends SQLiteOpenHelper {
 
-        private final static int _DBVersion = 7;
+        private final static int _DBVersion = 10;
         private final static String _DBName = "database.db";
 
         public MainDatabase(Context context) {
@@ -68,6 +68,7 @@ public class MainProvider extends BaseContentProvider {
             db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_HISTORY + " ( "
                     + FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + FIELD_INVEST_ID + " INTEGER, "
+                    + FIELD_CURRENCY_ID + " INTEGER, "
                     + FIELD_INVEST_AMOUNT + " INTEGER, "
                     + FIELD_INVEST_TYPE + " INTEGER, "
                     + FIELD_START_TIME + " TEXT, "
@@ -79,7 +80,7 @@ public class MainProvider extends BaseContentProvider {
 
             db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_CHART + " ( "
                     + FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + FIELD_EXPIRE + " INTEGER, "
+                    + FIELD_CURRENCY_NAME + " TEXT, "
                     + FIELD_CHART_DATA + " TEXT, "
                     + FIELD_CHART_INTERVAL + " TEXT "
                     + ");");

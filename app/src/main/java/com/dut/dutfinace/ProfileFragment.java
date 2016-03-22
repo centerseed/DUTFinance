@@ -28,7 +28,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 
-public class ProfileFragment extends SyncFragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ProfileFragment extends SyncFragment implements LoaderManager.LoaderCallbacks<Cursor>, AsyncResponseParser.NetError{
 
     TextView mFunds;
     TextView mNetLiqs;
@@ -66,7 +66,7 @@ public class ProfileFragment extends SyncFragment implements LoaderManager.Loade
                 .post(body)
                 .build();
 
-        mClient.newCall(request).enqueue(new AsyncResponseParser(getContext()) {
+        mClient.newCall(request).enqueue(new AsyncResponseParser(getContext(), this) {
 
             @Override
             protected void parseResponse(final JSONObject obj) throws Exception {

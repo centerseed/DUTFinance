@@ -1,5 +1,6 @@
 package com.dut.dutfinace.activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -19,16 +20,28 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dut.dutfinace.AccountUtils;
+import com.dut.dutfinace.Const;
 import com.dut.dutfinace.HistoryFragment;
+import com.dut.dutfinace.JSONBuilder;
 import com.dut.dutfinace.ProfileFragment;
 import com.dut.dutfinace.R;
 import com.dut.dutfinace.TradeFragment;
+import com.dut.dutfinace.URLBuilder;
+import com.dut.dutfinace.network.AsyncResponseParser;
+import com.dut.dutfinace.provider.MainProvider;
 
-public class MainActivity extends AppCompatActivity {
+import org.json.JSONObject;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+
+public class MainActivity extends AppCompatActivity implements AsyncResponseParser.NetError {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
+    private final OkHttpClient mClient = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         // customTabs(tabLayout);
         tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.getTabAt(2).setIcon(R.mipmap.ic_history);
     }
 
 
@@ -68,9 +82,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logout() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
+        String json = new JSONBuilder().setParameter(
+                "usersys_id", AccountUtils.getSysId(this),
+                "session_id", AccountUtils.getToken(this)).build();
+
+        RequestBody body = RequestBody.create(Const.JSON, json);
+        String url = new URLBuilder(this).host(R.string.host).path("DUT", "api", "Logout").toString();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        mClient.newCall(request).enqueue(new AsyncResponseParser(this, this) {
+
+            @Override
+            protected void parseResponse(final JSONObject obj) throws Exception {
+                if (obj.optInt("session_status") == 2 || obj.optInt("isLogout") == 2) {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onNetError() {
+
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

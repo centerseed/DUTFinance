@@ -1,10 +1,10 @@
 package com.dut.dutfinace;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.dut.dutfinace.activity.RecordActivity;
 import com.dut.dutfinace.adapter.HistoryAdapter;
 import com.dut.dutfinace.network.AsyncResponseParser;
 import com.dut.dutfinace.provider.MainProvider;
@@ -28,7 +29,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class HistoryFragment extends SyncFragment implements LoaderManager.LoaderCallbacks<Cursor>  {
+public class HistoryFragment extends SyncFragment implements LoaderManager.LoaderCallbacks<Cursor>, HistoryAdapter.OnClickListener {
 
     Uri mUri;
     HistoryAdapter mAdapter;
@@ -43,6 +44,7 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mUri = MainProvider.getProviderUri(getString(R.string.auth_main_provider), MainProvider.TABLE_HISTORY);
         mAdapter = new HistoryAdapter(getContext(), null);
+        mAdapter.setOnClickListener(this);
         return inflater.inflate(R.layout.fragment_history, container, false);
     }
 
@@ -96,13 +98,14 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
                 .post(body)
                 .build();
 
-        mClient.newCall(request).enqueue(new AsyncResponseParser(getContext()) {
+        mClient.newCall(request).enqueue(new AsyncResponseParser(getContext(), this) {
 
             @Override
             protected void parseResponse(final JSONObject obj) throws Exception {
 
                 int sessionStatus = obj.optInt("session_status");
                 if (sessionStatus == 2) return;
+                m_context.getContentResolver().delete(mUri, MainProvider.FIELD_ID + "=?", new String[]{">0"});
 
                 JSONArray array = obj.getJSONArray("HistoryList");
 
@@ -111,6 +114,7 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
                     ContentValues values = new ContentValues();
                     values.put(MainProvider.FIELD_ID, object.optInt("currencysys_id") + object.optInt("invest_id"));
                     values.put(MainProvider.FIELD_INVEST_ID,  object.optInt("invest_id"));
+                    values.put(MainProvider.FIELD_CURRENCY_ID,  object.optInt("currencysys_id"));
                     values.put(MainProvider.FIELD_INVEST_AMOUNT, object.optInt("invest_amount"));
                     values.put(MainProvider.FIELD_INVEST_TYPE, object.optString("change"));
                     values.put(MainProvider.FIELD_START_TIME, object.optString("start_time"));
@@ -145,5 +149,13 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         if (mAdapter != null) mAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onClick(int investID, String name) {
+        Intent intent = new Intent(getActivity(), RecordActivity.class);
+        intent.putExtra(RecordActivity.ARG_INVEST_ID, investID);
+        intent.putExtra(RecordActivity.ARG_CURRENCY_NAME, name);
+        startActivity(intent);
     }
 }

@@ -6,11 +6,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import com.dut.dutfinace.network.AsyncResponseParser;
 
 /**
  * Created by Mac on 16/3/12.
  */
-public abstract class SyncFragment extends Fragment {
+public abstract class SyncFragment extends Fragment implements AsyncResponseParser.NetError {
 
     protected MenuItem mRefreshItem = null;
 
@@ -62,6 +65,11 @@ public abstract class SyncFragment extends Fragment {
         if (mRefreshItem != null) {
             mRefreshItem.setActionView(R.layout.refresh_item);
         }
+    }
+
+    @Override
+    public void onNetError() {
+        Toast.makeText(getContext(), "網路或server錯誤", Toast.LENGTH_SHORT).show();
     }
 
 }

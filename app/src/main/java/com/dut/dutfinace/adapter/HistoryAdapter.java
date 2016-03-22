@@ -2,6 +2,7 @@ package com.dut.dutfinace.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +15,26 @@ import com.dut.dutfinace.provider.MainProvider;
  * Created by Mac on 16/3/12.
  */
 public class HistoryAdapter extends AbstractRecyclerCursorAdapter {
+    Uri mCurrencyUri;
+    OnClickListener mListener;
+
+    public interface OnClickListener {
+        void onClick(int investID, String name);
+    }
+
     public HistoryAdapter(Context context, Cursor c) {
         super(context, c);
+        mCurrencyUri = MainProvider.getProviderUri(context.getString(R.string.auth_main_provider), MainProvider.TABLE_CURRENCY);
+    }
+
+    public void setOnClickListener(OnClickListener listener) {
+        mListener = listener;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
         HistoryViewHolder vh = (HistoryViewHolder) viewHolder;
-        vh.name.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_INVEST_ID)));
+        vh.name.setText(getCurrencyName(cursor.getInt(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_ID))));
         vh.startTime.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_START_TIME)));
         vh.rate.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_END_PRICE)));
         vh.result.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_INVEST_RESULT)).equals("1") ? "獲利" : "虧損");
@@ -46,6 +59,27 @@ public class HistoryAdapter extends AbstractRecyclerCursorAdapter {
             startTime = (TextView) itemView.findViewById(R.id.time);
             rate = (TextView) itemView.findViewById(R.id.rate);
             result = (TextView) itemView.findViewById(R.id.result);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Cursor cursor = (Cursor) getItem(getAdapterPosition());
+                    if (null != mListener) {
+                        int id = cursor.getInt(cursor.getColumnIndex(MainProvider.FIELD_INVEST_ID));
+                        String name = getCurrencyName(cursor.getInt(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_ID)));
+                        mListener.onClick(id, name);
+                    }
+                }
+            });
         }
+    }
+
+    private String getCurrencyName(int id) {
+        Cursor c = m_context.getContentResolver().query(mCurrencyUri, null, MainProvider.FIELD_CURRENCY_ID + "=?", new String[]{id + ""}, null);
+        if (c != null && c.moveToFirst()) {
+            String name =  c.getString(c.getColumnIndex(MainProvider.FIELD_CURRENCY_NAME));
+            c.close();
+            return name;
+        }
+        return "";
     }
 }

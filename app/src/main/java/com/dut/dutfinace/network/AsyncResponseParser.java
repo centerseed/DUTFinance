@@ -16,7 +16,8 @@ abstract public class AsyncResponseParser implements Callback {
     protected PostProcess m_postProcess;
     protected NetError m_netError;
 
-    public AsyncResponseParser(Context c) {
+    public AsyncResponseParser(Context c, NetError netError) {
+        m_netError = netError;
         m_context = c;
     }
 

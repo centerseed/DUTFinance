@@ -115,7 +115,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponsePar
                     .post(body)
                     .build();
 
-            mClient.newCall(request).enqueue(new AsyncResponseParser(this) {
+            mClient.newCall(request).enqueue(new AsyncResponseParser(this, this) {
 
                 @Override
                 protected void parseResponse(final JSONObject obj) throws Exception {
@@ -172,7 +172,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponsePar
                     .post(body)
                     .build();
 
-            mClient.newCall(request).enqueue(new AsyncResponseParser(this) {
+            mClient.newCall(request).enqueue(new AsyncResponseParser(this, this) {
 
                 @Override
                 protected void parseResponse(final JSONObject jsonObject) throws Exception {

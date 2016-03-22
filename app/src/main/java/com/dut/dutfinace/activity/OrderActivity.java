@@ -1,10 +1,14 @@
 package com.dut.dutfinace.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,10 +21,13 @@ import com.dut.dutfinace.AccountUtils;
 import com.dut.dutfinace.Const;
 import com.dut.dutfinace.CustomCircleProgressBar;
 import com.dut.dutfinace.JSONBuilder;
+import com.dut.dutfinace.PriceTextView;
 import com.dut.dutfinace.R;
 import com.dut.dutfinace.URLBuilder;
 import com.dut.dutfinace.network.AsyncResponseParser;
 import com.dut.dutfinace.provider.MainProvider;
+import com.dut.dutfinace.streaming.CurrencyService;
+import com.dut.dutfinace.streaming.SocketClient;
 
 import org.json.JSONObject;
 
@@ -38,14 +45,17 @@ public class OrderActivity extends ToolbarActivity {
     public static final String ARG_EXCHANGE_RATE = "exchange_rate";
     public static final String ARG_AMOUNT = "amount";
     public static final String ARG_SIDE = "side";
+    public static final String ARG_ORDER_ID = "order_id";
 
     public static final int SIDE_UP = 0;
     public static final int SIDE_DOWN = 1;
 
     TextView mCurrency;
+    PriceTextView mPrice;
     EditText mAmount;
     String mName;
     String mId;
+    BroadcastReceiver mReceiver;
     private final OkHttpClient mClient = new OkHttpClient();
 
     @Override
@@ -53,13 +63,34 @@ public class OrderActivity extends ToolbarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activiy_order);
         mCurrency = (TextView) findViewById(R.id.currency);
+        mPrice = (PriceTextView) findViewById(R.id.price);
+        mPrice.setTextSize(48);
         mAmount = (EditText) findViewById(R.id.amount);
 
         mName = getIntent().getStringExtra(ARG_TARGET_NAME);
         mId = getIntent().getStringExtra(ARG_TARGET_ID);
         mCurrency.setText(mName);
+        mPrice.setPrice(PreferenceManager.getDefaultSharedPreferences(this).getFloat(mName, 0));
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mReceiver = new Receiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(CurrencyService.ACTION_UPDATE);
+        registerReceiver(mReceiver, filter);
+
+        startStreaming();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mReceiver);
+        stopStreaming();
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putFloat(mCurrency.getText().toString(), (float) mPrice.getPrice()).commit();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -128,7 +159,7 @@ public class OrderActivity extends ToolbarActivity {
                 "invest_amount", amount + "",
                 "invest_time", time,
                 "change", side + ""
-                ).build();
+        ).build();
 
         RequestBody body = RequestBody.create(Const.JSON, json);
         String url = new URLBuilder(this).host(R.string.host).path("DUT", "api", "Invest").toString();
@@ -137,7 +168,7 @@ public class OrderActivity extends ToolbarActivity {
                 .post(body)
                 .build();
 
-        mClient.newCall(request).enqueue(new AsyncResponseParser(this) {
+        mClient.newCall(request).enqueue(new AsyncResponseParser(this, this) {
 
             @Override
             protected void parseResponse(final JSONObject obj) throws Exception {
@@ -159,6 +190,7 @@ public class OrderActivity extends ToolbarActivity {
                             intent.putExtra(ARG_EXCHANGE_RATE, obj.optDouble("start_price"));
                             intent.putExtra(ARG_AMOUNT, obj.optInt("invest_amount"));
                             intent.putExtra(ARG_SIDE, side);
+                            intent.putExtra(ARG_ORDER_ID, obj.optInt("investsys_id"));
                             startActivity(intent);
                             OrderActivity.this.finish();
                         } else if (result == 2) {
@@ -170,5 +202,35 @@ public class OrderActivity extends ToolbarActivity {
                 });
             }
         });
+    }
+
+    private class Receiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (null == intent) return;
+            if (CurrencyService.ACTION_UPDATE.equals(intent.getAction())) {
+                try {
+                    String name = intent.getStringExtra(SocketClient.ARG_NAME);
+                    double price = intent.getDoubleExtra(SocketClient.ARG_PRICE, 0.0);
+                    if (name.contains(mName))
+                        mPrice.setPrice(price);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void startStreaming() {
+        Intent intent = new Intent(this, CurrencyService.class);
+        intent.setAction(CurrencyService.ARG_START_CONNECT);
+        startService(intent);
+    }
+
+    private void stopStreaming() {
+        Intent intent = new Intent(this, CurrencyService.class);
+        intent.setAction(CurrencyService.ARG_DISCONNECT);
+        startService(intent);
     }
 }
