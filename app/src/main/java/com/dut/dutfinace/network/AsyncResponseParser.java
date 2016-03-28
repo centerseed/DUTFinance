@@ -23,7 +23,7 @@ abstract public class AsyncResponseParser implements Callback {
 
     @Override
     public void onFailure(Call call, IOException e) {
-        if (m_netError != null) m_netError.onNetError();
+        if (m_netError != null) m_netError.onNetError(e);
     }
 
     @Override
@@ -42,18 +42,12 @@ abstract public class AsyncResponseParser implements Callback {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            if (m_netError != null) m_netError.onResponseError(response.code());
         }
     }
 
     public void onAuthFail() {
-    }
-
-    public void setPostProcess(PostProcess process) {
-        m_postProcess = process;
-    }
-
-    public void setNetError(NetError error) {
-        m_netError = error;
     }
 
     protected abstract void parseResponse(JSONObject jsonObject) throws Exception;
@@ -63,6 +57,7 @@ abstract public class AsyncResponseParser implements Callback {
     }
 
     public interface NetError {
-        void onNetError();
+        void onNetError(IOException e);
+        void onResponseError(int error);
     }
 }

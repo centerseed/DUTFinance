@@ -32,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
@@ -232,7 +233,12 @@ public class ChartFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
-    public void onNetError() {
+    public void onNetError(IOException e) {
+
+    }
+
+    @Override
+    public void onResponseError(int error) {
 
     }
 }

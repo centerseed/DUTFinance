@@ -77,7 +77,6 @@ public class HistoryAdapter extends AbstractRecyclerCursorAdapter {
         Cursor c = m_context.getContentResolver().query(mCurrencyUri, null, MainProvider.FIELD_CURRENCY_ID + "=?", new String[]{id + ""}, null);
         if (c != null && c.moveToFirst()) {
             String name =  c.getString(c.getColumnIndex(MainProvider.FIELD_CURRENCY_NAME));
-            c.close();
             return name;
         }
         return "";

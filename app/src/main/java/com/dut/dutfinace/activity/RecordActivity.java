@@ -52,11 +52,6 @@ public class RecordActivity extends ToolbarActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onNetError() {
-
-    }
-
-    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         CursorLoader cl = new CursorLoader(this);
         cl.setUri(mUri);

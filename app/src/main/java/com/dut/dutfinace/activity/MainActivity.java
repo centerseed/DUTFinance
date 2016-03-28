@@ -32,11 +32,13 @@ import com.dut.dutfinace.provider.MainProvider;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class MainActivity extends AppCompatActivity implements AsyncResponseParser.NetError {
+public class MainActivity extends NetStatusActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -104,11 +106,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponsePars
                 }
             }
         });
-    }
-
-    @Override
-    public void onNetError() {
-
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

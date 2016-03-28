@@ -86,6 +86,7 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
     @Override
     void onSync() {
         runRefresh();
+        mAdapter.swapCursor(null);
         String json = new JSONBuilder().setParameter(
                 "usersys_id", AccountUtils.getSysId(getContext()),
                 "session_id", AccountUtils.getToken(getContext()),
@@ -105,7 +106,7 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
 
                 int sessionStatus = obj.optInt("session_status");
                 if (sessionStatus == 2) return;
-                m_context.getContentResolver().delete(mUri, MainProvider.FIELD_ID + "=?", new String[]{">0"});
+                m_context.getContentResolver().delete(mUri, MainProvider.FIELD_ID + ">=?", new String[]{"0"});
 
                 JSONArray array = obj.getJSONArray("HistoryList");
 

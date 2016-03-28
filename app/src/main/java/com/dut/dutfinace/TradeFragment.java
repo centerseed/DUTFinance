@@ -205,11 +205,6 @@ public class TradeFragment extends SyncFragment implements LoaderManager.LoaderC
 
     }
 
-    @Override
-    public void onNetError() {
-
-    }
-
     public class clickListener implements View.OnClickListener {
         String mName;
 

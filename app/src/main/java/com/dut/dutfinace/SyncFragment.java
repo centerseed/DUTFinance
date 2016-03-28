@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import com.dut.dutfinace.network.AsyncResponseParser;
 
+import java.io.IOException;
+
 /**
  * Created by Mac on 16/3/12.
  */
@@ -68,8 +70,25 @@ public abstract class SyncFragment extends Fragment implements AsyncResponsePars
     }
 
     @Override
-    public void onNetError() {
-        Toast.makeText(getContext(), "網路或server錯誤", Toast.LENGTH_SHORT).show();
+    public void onNetError(final IOException e) {
+        if (getActivity() != null)
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ToastUtils.showNetErrorToast(getContext(), e.toString());
+                    stopRefresh();
+                }
+            });
     }
 
+    @Override
+    public void onResponseError(final int error) {
+        if (getActivity() != null)
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ToastUtils.showNetErrorToast(getContext(), error);
+                }
+            });
+    }
 }

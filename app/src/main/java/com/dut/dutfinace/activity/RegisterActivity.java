@@ -283,9 +283,4 @@ public class RegisterActivity extends ToolbarActivity {
         int ascii = Integer.valueOf(a);
         return ascii - 55 - offset;
     }
-
-    @Override
-    public void onNetError() {
-        Toast.makeText(this, R.string.net_error_io, Toast.LENGTH_LONG).show();
-    }
 }

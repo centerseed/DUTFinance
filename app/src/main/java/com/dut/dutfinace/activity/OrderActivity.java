@@ -31,6 +31,7 @@ import com.dut.dutfinace.streaming.SocketClient;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -47,8 +48,8 @@ public class OrderActivity extends ToolbarActivity {
     public static final String ARG_SIDE = "side";
     public static final String ARG_ORDER_ID = "order_id";
 
-    public static final int SIDE_UP = 0;
-    public static final int SIDE_DOWN = 1;
+    public static final int SIDE_UP = 1;
+    public static final int SIDE_DOWN = 2;
 
     TextView mCurrency;
     PriceTextView mPrice;
@@ -95,11 +96,6 @@ public class OrderActivity extends ToolbarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onNetError() {
-
     }
 
     public void onLookUp(View v) {

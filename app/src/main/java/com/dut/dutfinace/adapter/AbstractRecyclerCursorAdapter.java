@@ -92,9 +92,6 @@ public abstract class AbstractRecyclerCursorAdapter extends RecyclerView.Adapter
 
     @Override
     public int getItemViewType(int position) {
-        if (m_cursor != null && m_cursor.moveToPosition(position))
-            return getItemViewType(m_cursor);
-        else
             return 0;
     }
 

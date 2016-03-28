@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import com.dut.dutfinace.R;
 import com.dut.dutfinace.network.AsyncResponseParser;
 
-public abstract class ToolbarActivity extends AppCompatActivity implements AsyncResponseParser.NetError {
+public abstract class ToolbarActivity extends NetStatusActivity {
 
     private static final String TAG = "ToolbarActivity";
 

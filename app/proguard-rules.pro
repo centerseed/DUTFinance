@@ -15,3 +15,7 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-keep class com.mikhaellopez.** { *; }
+-keep class com.squareup.okhttp3.** { *; }
+-keep class com.github.PhilJay.** { *; }

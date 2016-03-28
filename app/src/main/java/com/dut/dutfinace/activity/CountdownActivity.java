@@ -116,12 +116,6 @@ public class CountdownActivity extends ToolbarActivity {
         stopStreaming();
     }
 
-    @Override
-    public void onNetError() {
-
-    }
-
-
     public void startTimeProgress() {
         mCircularProgressBar = (CustomCircleProgressBar) findViewById(R.id.circleProgress);
         final int countDownConst = 60;

@@ -4,11 +4,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -39,7 +41,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class LoginActivity extends AppCompatActivity implements AsyncResponseParser.NetError {
+public class LoginActivity extends NetStatusActivity {
 
     private static final int REQUEST_READ_CONTACTS = 0;
     private static final String[] DUMMY_CREDENTIALS = new String[]{
@@ -158,45 +160,9 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponsePar
 
         if (cancel) {
             focusView.requestFocus();
-        } else {
-            showProgress(true);
-
-            String json = new JSONBuilder().setParameter(
-                    "user_id", email,
-                    "pwd", password).build();
-
-            RequestBody body = RequestBody.create(Const.JSON, json);
-            String url = new URLBuilder(LoginActivity.this).host(R.string.host).path("DUT", "api", "Login").toString();
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(body)
-                    .build();
-
-            mClient.newCall(request).enqueue(new AsyncResponseParser(this, this) {
-
-                @Override
-                protected void parseResponse(final JSONObject jsonObject) throws Exception {
-                    if (mEmailView != null) mEmailView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.d("Login", jsonObject.toString());
-                            showProgress(false);
-                            int resCode = jsonObject.optInt("login_code");
-                            if (resCode == 1) {
-                                AccountUtils.setToken(LoginActivity.this, jsonObject.optString("session_id"));
-                                AccountUtils.setAccount(LoginActivity.this, mEmailView.getText().toString(), mPasswordView.getText().toString(), jsonObject.optString("usersys_id"));
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            } else if (resCode == 2) {
-                                Toast.makeText(LoginActivity.this, "登入失敗", Toast.LENGTH_SHORT).show();
-                            } else if (resCode == 3) {
-                                Toast.makeText(LoginActivity.this, "超過登入數量（最多支援兩個裝置同時登入）", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }
-            });
+            return;
         }
+        showLoginDialog(email, password);
     }
 
     private boolean isPasswordValid(String password) {
@@ -232,8 +198,80 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponsePar
     }
 
     @Override
-    public void onNetError() {
-        showProgress(false);
+    public void onNetError(IOException e) {
+        super.onNetError(e);
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                showProgress(false);
+            }
+        });
+    }
+
+    private void showLoginDialog(final String mail, final String password) {
+        new AlertDialog.Builder(LoginActivity.this)
+                .setTitle("提醒")
+                .setMessage("本系統為模擬交易系統！\n" +
+                        "遊戲規則何現行外匯金融所提供之契約內容絕不相同\n" +
+                        "僅供會員模擬使用\n" +
+                        "\n" +
+                        "您要在本系統進行模擬外匯交易前，確定您以知道此項告知！\n" +
+                        "若要進行標準外匯交易買賣，請至各大金融機構開戶交易\n" +
+                        "\n" +
+                        "DUT Financial祝您操作順心\n")
+                .setPositiveButton("登入", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        login(mail, password);
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    private void login(String email, String password) {
+        showProgress(true);
+
+        String json = new JSONBuilder().setParameter(
+                "user_id", email,
+                "pwd", password).build();
+
+        RequestBody body = RequestBody.create(Const.JSON, json);
+        String url = new URLBuilder(LoginActivity.this).host(R.string.host).path("DUT", "api", "Login").toString();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        mClient.newCall(request).enqueue(new AsyncResponseParser(this, this) {
+
+            @Override
+            protected void parseResponse(final JSONObject jsonObject) throws Exception {
+                if (mEmailView != null) mEmailView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("Login", jsonObject.toString());
+                        showProgress(false);
+                        int resCode = jsonObject.optInt("login_code");
+                        if (resCode == 1) {
+                            AccountUtils.setToken(LoginActivity.this, jsonObject.optString("session_id"));
+                            AccountUtils.setAccount(LoginActivity.this, mEmailView.getText().toString(), mPasswordView.getText().toString(), jsonObject.optString("usersys_id"));
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                        } else if (resCode == 2) {
+                            Toast.makeText(LoginActivity.this, "登入失敗", Toast.LENGTH_SHORT).show();
+                        } else if (resCode == 3) {
+                            Toast.makeText(LoginActivity.this, "超過登入數量（最多支援兩個裝置同時登入）", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
     }
 }
 
