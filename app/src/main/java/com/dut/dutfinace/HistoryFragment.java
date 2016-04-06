@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.dut.dutfinace.activity.RecordActivity;
 import com.dut.dutfinace.adapter.HistoryAdapter;
@@ -34,6 +35,8 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
     Uri mUri;
     HistoryAdapter mAdapter;
     Spinner mSpinner;
+    TextView mProfitTitle;
+    TextView mProfit;
     protected RecyclerView mRecyclerView;
     private final OkHttpClient mClient = new OkHttpClient();
 
@@ -59,6 +62,9 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mProfitTitle = (TextView) view.findViewById(R.id.profitTitle);
+        mProfit = (TextView) view.findViewById(R.id.profit);
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         if (mRecyclerView != null) {
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -74,6 +80,9 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 mInterval = i + 1;
                 onSync();
+                if (mInterval == 1) mProfitTitle.setText("本日收益：");
+                if (mInterval == 2) mProfitTitle.setText("本週收益：");
+                if (mInterval == 3) mProfitTitle.setText("本月收益：");
             }
 
             @Override
@@ -114,8 +123,8 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
                     JSONObject object = array.getJSONObject(i);
                     ContentValues values = new ContentValues();
                     values.put(MainProvider.FIELD_ID, object.optInt("currencysys_id") + object.optInt("invest_id"));
-                    values.put(MainProvider.FIELD_INVEST_ID,  object.optInt("invest_id"));
-                    values.put(MainProvider.FIELD_CURRENCY_ID,  object.optInt("currencysys_id"));
+                    values.put(MainProvider.FIELD_INVEST_ID, object.optInt("invest_id"));
+                    values.put(MainProvider.FIELD_CURRENCY_ID, object.optInt("currencysys_id"));
                     values.put(MainProvider.FIELD_INVEST_AMOUNT, object.optInt("invest_amount"));
                     values.put(MainProvider.FIELD_INVEST_TYPE, object.optString("change"));
                     values.put(MainProvider.FIELD_START_TIME, object.optString("start_time"));
@@ -144,6 +153,21 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
         stopRefresh();
         if (mAdapter != null && cursor.moveToFirst()) {
             mAdapter.swapCursor(cursor);
+
+            double profit = 0;
+            while (!cursor.isAfterLast()) {
+                String result = cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_INVEST_RESULT));
+                double amount = cursor.getInt(cursor.getColumnIndex(MainProvider.FIELD_INVEST_AMOUNT));
+                if (result.equals("1")) amount = amount * 0.75;
+                if (result.equals("2")) amount = amount * -1;
+                profit += amount;
+                cursor.moveToNext();
+            }
+
+            if (profit > 0) mProfit.setTextColor(getContext().getResources().getColor(R.color.colorUp));
+            else if (profit < 0) mProfit.setTextColor(getContext().getResources().getColor(R.color.colorDown));
+            else mProfit.setTextColor(getContext().getResources().getColor(R.color.colorPrimaryDark));
+            mProfit.setText(profit + "");
         }
     }
 

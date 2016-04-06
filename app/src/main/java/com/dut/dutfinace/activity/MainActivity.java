@@ -2,6 +2,7 @@ package com.dut.dutfinace.activity;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -59,9 +60,7 @@ public class MainActivity extends NetStatusActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        // customTabs(tabLayout);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.getTabAt(2).setIcon(R.mipmap.ic_history);
     }
 
 
@@ -100,6 +99,9 @@ public class MainActivity extends NetStatusActivity {
             @Override
             protected void parseResponse(final JSONObject obj) throws Exception {
                 if (obj.optInt("session_status") == 2 || obj.optInt("isLogout") == 2) {
+                    Uri historyUri = MainProvider.getProviderUri(getString(R.string.auth_main_provider), MainProvider.TABLE_HISTORY);
+                    m_context.getContentResolver().delete(historyUri, MainProvider.FIELD_ID + ">=?", new String[]{"0"});
+
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();

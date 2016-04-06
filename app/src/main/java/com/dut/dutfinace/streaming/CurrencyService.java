@@ -25,7 +25,7 @@ public class CurrencyService extends Service {
     public static final String ARG_DISCONNECT = "_disconnect";
     public static final String ACTION_UPDATE = "com.dut.dutfinance.PRICE_UPDATE";
 
-    final String URL = "52.192.233.73";
+    final String URL = "1.34.243.17";
 
     SocketClient mEURUSDClient;
     SocketClient mGBPJPYSocket;

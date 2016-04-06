@@ -20,6 +20,11 @@ public class URLBuilder {
         return this;
     }
 
+    public URLBuilder host(String hostString) {
+        m_builder = Uri.parse(hostString).buildUpon();
+        return this;
+    }
+
     public URLBuilder path(String... paths) {
         for (String p : paths)
             if (p != null)

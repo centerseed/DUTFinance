@@ -16,10 +16,10 @@ public class ToastUtils {
                 break;
             case 404:
                 err = "找不到資源";
-                return;
+                break;
             case 500:
                 err = "伺服器內部錯誤";
-                return;
+                break;
             default:
                 err = "未知的錯誤";
         }

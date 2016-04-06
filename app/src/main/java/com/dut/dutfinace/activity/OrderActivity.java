@@ -191,8 +191,12 @@ public class OrderActivity extends ToolbarActivity {
                             OrderActivity.this.finish();
                         } else if (result == 2) {
                             Toast.makeText(OrderActivity.this, "下單金額超過最大下單金額", Toast.LENGTH_LONG);
-                        } else {
+                        } else if (result == 3) {
                             Toast.makeText(OrderActivity.this, "下單金額超過帳戶餘額", Toast.LENGTH_LONG);
+                        } else if (result == 4) {
+                            Toast.makeText(OrderActivity.this, "帳戶鎖定無法下單", Toast.LENGTH_LONG);
+                        } else {
+                            Toast.makeText(OrderActivity.this, "系統限制不可下單", Toast.LENGTH_LONG);
                         }
                     }
                 });

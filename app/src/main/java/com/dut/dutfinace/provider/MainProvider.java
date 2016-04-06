@@ -12,7 +12,7 @@ public class MainProvider extends BaseContentProvider {
     public final static String TABLE_CHART = "_table_chart";
 
     public final static String FIELD_AVAILABLE_FUND = "_available_fund";
-    public final static String FIELD_NET_LIQ = "_net_liq";
+    public final static String FIELD_BET_MAX = "_net_liq";
     public final static String FIELD_USED_DEPOSIT = "_used_deposit";
     public final static String FIELD_AVAILABLE_DEPOSIT = "_available_deposit";
 
@@ -53,7 +53,7 @@ public class MainProvider extends BaseContentProvider {
                     + FIELD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + FIELD_EXPIRE + " INTEGER, "
                     + FIELD_AVAILABLE_FUND + " TEXT, "
-                    + FIELD_NET_LIQ + " TEXT, "
+                    + FIELD_BET_MAX + " TEXT, "
                     + FIELD_USED_DEPOSIT + " TEXT, "
                     + FIELD_AVAILABLE_DEPOSIT + " TEXT "
                     + ");");

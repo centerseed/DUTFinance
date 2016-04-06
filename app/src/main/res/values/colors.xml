@@ -10,4 +10,6 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorRed">#fd5151</color>
     <color name="colorTransparent">#FFFFFFFF</color>
+    <color name="colorTabText">#777777</color>
+    <color name="colorTabTextSelected">#222222</color>
 </resources>

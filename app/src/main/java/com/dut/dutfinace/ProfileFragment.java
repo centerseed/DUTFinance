@@ -31,7 +31,7 @@ import okhttp3.RequestBody;
 public class ProfileFragment extends SyncFragment implements LoaderManager.LoaderCallbacks<Cursor>, AsyncResponseParser.NetError{
 
     TextView mFunds;
-    TextView mNetLiqs;
+    TextView mBetMax;
     TextView mUsedDeposit;
     TextView mAvailDeposit;
     Uri mUri;
@@ -47,7 +47,7 @@ public class ProfileFragment extends SyncFragment implements LoaderManager.Loade
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mFunds = (TextView) view.findViewById(R.id.avail_funds);
-        mNetLiqs = (TextView) view.findViewById(R.id.net_liq);
+        mBetMax = (TextView) view.findViewById(R.id.bet_max);
         mUsedDeposit = (TextView) view.findViewById(R.id.used_deposit);
         mAvailDeposit = (TextView) view.findViewById(R.id.avail_deposit);
     }
@@ -77,6 +77,7 @@ public class ProfileFragment extends SyncFragment implements LoaderManager.Loade
                 ContentValues values = new ContentValues();
                 values.put(MainProvider.FIELD_ID, obj.optString("user_id").hashCode());
                 values.put(MainProvider.FIELD_AVAILABLE_FUND, obj.optString("total"));
+                values.put(MainProvider.FIELD_BET_MAX, obj.optString("bet_max"));
 
                 m_context.getContentResolver().insert(mUri, values);
                 m_context.getContentResolver().notifyChange(mUri, null);
@@ -104,6 +105,7 @@ public class ProfileFragment extends SyncFragment implements LoaderManager.Loade
         if (cursor != null && cursor.moveToFirst()) {
             String total = cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_AVAILABLE_FUND));
             mFunds.setText(total);
+            mBetMax.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_BET_MAX)));
             stopRefresh();
         }
     }

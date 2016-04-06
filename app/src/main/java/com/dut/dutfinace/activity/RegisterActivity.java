@@ -1,10 +1,13 @@
 package com.dut.dutfinace.activity;
 
 import android.accounts.AccountManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -18,9 +21,11 @@ import com.dut.dutfinace.R;
 import com.dut.dutfinace.URLBuilder;
 import com.dut.dutfinace.network.AsyncResponseParser;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,11 +52,16 @@ public class RegisterActivity extends ToolbarActivity {
     private TextView mErrorPhone;
     private TextView mErrorIdentity;
 
+    private Spinner mTeamList;
     private Spinner mGender;
 
     private final OkHttpClient mClient = new OkHttpClient();
     Pattern mPasswordPattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{3,20}$");
     private String[] genders = {"男", "女"};
+    HashMap<Integer, String> mTeamHash = new HashMap<>();
+
+    String mSelectedName;
+    int mSelectedId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,14 +80,29 @@ public class RegisterActivity extends ToolbarActivity {
         mErrorCheckPassword = (TextView) findViewById(R.id.err_check_password);
         mErrorAccount = (TextView) findViewById(R.id.err_account);
         mErrorMail = (TextView) findViewById(R.id.err_mail);
-        mErrorPhone = (TextView) findViewById(R.id.err_password);
+        mErrorPhone = (TextView) findViewById(R.id.err_phone);
         mErrorIdentity = (TextView) findViewById(R.id.err_identity);
+
+        mTeamList = (Spinner) findViewById(R.id.team);
+        mTeamList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSelectedName = mTeamHash.get(++i);
+                mSelectedId = i;
+                Log.d("Team selected ->", mSelectedName + " id: " + i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         mGender = (Spinner) findViewById(R.id.gender);
         ArrayAdapter<String> gender = new ArrayAdapter<String>(RegisterActivity.this, android.R.layout.simple_spinner_item, genders);
         mGender.setAdapter(gender);
 
-        mAccount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        /*mAccount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if (!b) checkAccount();
@@ -96,7 +121,7 @@ public class RegisterActivity extends ToolbarActivity {
             public void onFocusChange(View view, boolean b) {
                 if (!b) checkRePassword();
             }
-        });
+        }); */
 
         mPhone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -118,22 +143,26 @@ public class RegisterActivity extends ToolbarActivity {
                 if (!b) checkIdentity();
             }
         });
+
+        getTeamList();
     }
 
     public void onRegister(View view) {
-        if (!checkAccount() || !checkPassword() || !checkRePassword() || !checkMail() || !checkPhone() || !checkIdentity())
+       //
+        if (!checkPassword() || !checkRePassword() || !checkMail() || !checkPhone() || !checkIdentity())
             return;
 
         Toast.makeText(this, R.string.prompt_registering, Toast.LENGTH_SHORT).show();
 
         String json = new JSONBuilder().setParameter(
-                "user_id", mAccount.getText().toString(),
+                "teamName", mSelectedName,
+                "teamId", mSelectedId + "",
                 "pwd", mPassword.getText().toString(),
                 "mobil_phone", mPhone.getText().toString(),
                 "sex",(mGender.getSelectedItemPosition() + 1) + "").build();
 
         RequestBody body = RequestBody.create(Const.JSON, json);
-        String url = new URLBuilder(RegisterActivity.this).host(R.string.host).path("DUT", "api", "User", "Register").toString();
+        String url = new URLBuilder(RegisterActivity.this).host(R.string.host).path("DUT", "api", "TeamRegister").toString();
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
@@ -143,16 +172,26 @@ public class RegisterActivity extends ToolbarActivity {
 
             @Override
             protected void parseResponse(final JSONObject jsonObject) throws Exception {
-                if (mAccount != null) mAccount.post(new Runnable() {
+                if (mPassword != null) mPassword.post(new Runnable() {
                     @Override
                     public void run() {
                         Log.d("Reg", jsonObject.toString());
                         int resCode = jsonObject.optInt("reg_code");
                         if (resCode == 1) {
                             AccountUtils.setToken(RegisterActivity.this, jsonObject.optString("session_id"));
-                            AccountUtils.setAccount(RegisterActivity.this, mAccount.getText().toString(), mPassword.getText().toString(), jsonObject.optString("usersys_id"));
-                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                            startActivity(intent);
+                            AccountUtils.setAccount(RegisterActivity.this, jsonObject.optString("user_id"), mPassword.getText().toString(), jsonObject.optString("usersys_id"));
+
+                            new AlertDialog.Builder(RegisterActivity.this)
+                                    .setTitle("恭喜")
+                                    .setMessage("您的使用者帳號為" + jsonObject.optString("user_id") + "\n請妥善保存您的帳號和密碼")
+                                    .setPositiveButton("確認", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    })
+                                    .show();
                         } else if (resCode == 2) {
                             Toast.makeText(RegisterActivity.this, "註冊失敗", Toast.LENGTH_SHORT).show();
                         } else if (resCode == 3) {
@@ -282,5 +321,42 @@ public class RegisterActivity extends ToolbarActivity {
         if (a > 'O') offset = 2;
         int ascii = Integer.valueOf(a);
         return ascii - 55 - offset;
+    }
+
+    private void getTeamList() {
+        String json = new JSONBuilder().build();
+
+        RequestBody body = RequestBody.create(Const.JSON, json);
+
+        String url = new URLBuilder(RegisterActivity.this).host(R.string.host).path("DUT", "api", "GetTeamList").toString();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        mClient.newCall(request).enqueue(new AsyncResponseParser(this, this) {
+
+            @Override
+            protected void parseResponse(JSONObject jsonObject) throws Exception {
+                JSONArray array = jsonObject.getJSONArray("TeamList");
+                final String teamNames[] = new String[array.length()];
+
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject object = array.getJSONObject(i);
+                    mTeamHash.put(object.getInt("teamId"), object.getString("teamName"));
+                    teamNames[i] = object.getString("teamName");
+                }
+
+                mAccount.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayAdapter<String> teamAdapter = new ArrayAdapter<String>(RegisterActivity.this, R.layout.spinner_item, teamNames);
+                        mTeamList.setAdapter(teamAdapter);
+                        mSelectedName = mTeamHash.get(1);
+                        mSelectedId = 1;
+                    }
+                });
+            }
+        });
     }
 }

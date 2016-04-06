@@ -151,6 +151,8 @@ public class ChartFragment extends Fragment implements LoaderManager.LoaderCallb
     private void setData(String data) {
         try {
             JSONArray array = new JSONArray(data);
+            if (array.length() == 0) return;
+
             ArrayList<CandleEntry> yVals = new ArrayList<CandleEntry>();
             ArrayList<String> xVals = new ArrayList<String>();
 
@@ -207,6 +209,8 @@ public class ChartFragment extends Fragment implements LoaderManager.LoaderCallb
 
         RequestBody body = RequestBody.create(Const.JSON, json);
         String url = new URLBuilder(getContext()).host(R.string.host).path("DUT", "api", "BarData").toString();
+
+      //  String url = new URLBuilder(getContext()).host("1.34.243.17").path("DUT", "api", "BarData").toString();
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)

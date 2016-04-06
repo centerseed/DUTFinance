@@ -29,9 +29,31 @@
                 android:hint="@string/prompt_email"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:inputType="text" />
+                android:inputType="text"
+                android:visibility="gone" />
         </android.support.design.widget.TextInputLayout>
 
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="組別"
+                android:id="@+id/textView17"
+                android:layout_gravity="center_vertical" />
+
+            <Spinner
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/team"
+                android:layout_gravity="right"
+                android:layout_marginLeft="8dp" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -97,7 +119,7 @@
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
-                android:id="@+id/mail"
+                android:id="@+id/phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_phone"
@@ -111,18 +133,17 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/error_input_phone"
-            android:id="@+id/textView10"
+            android:id="@+id/err_phone"
             android:textColor="@color/colorRed"
             android:visibility="gone"
             android:layout_marginLeft="@dimen/margin_small" />
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/err_phone">
+            android:layout_height="wrap_content">
 
             <AutoCompleteTextView
-                android:id="@+id/phone"
+                android:id="@+id/mail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_mail"
