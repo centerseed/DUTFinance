@@ -1,7 +1,6 @@
 package com.dut.dutfinace;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,11 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.dut.dutfinace.activity.LoginActivity;
-import com.dut.dutfinace.dummy.DummyData;
 import com.dut.dutfinace.network.AsyncResponseParser;
 import com.dut.dutfinace.provider.MainProvider;
 import com.github.mikephil.charting.charts.CandleStickChart;
@@ -135,18 +131,28 @@ public class ChartFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     private void draw(String data) {
-        setXAxis();
-        setYAxis();
-        mChart.getLegend().setEnabled(false);
+        try {
+            mChart.clear();
+            setXAxis();
+            setYAxis();
+            mChart.getLegend().setEnabled(false);
 
-        setData(data);
-        mChart.invalidate();
-        mChart.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mChart.setAutoScaleMinMaxEnabled(true);
-            }
-        }, 500);
+            setData(data);
+       /*     mChart.invalidate();
+            mChart.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        mChart.setAutoScaleMinMaxEnabled(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 500); */
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setXAxis() {
@@ -228,7 +234,7 @@ public class ChartFragment extends Fragment implements LoaderManager.LoaderCallb
         RequestBody body = RequestBody.create(Const.JSON, json);
         String url = new URLBuilder(getContext()).host(R.string.host).path("DUT", "api", "BarData").toString();
 
-      //  String url = new URLBuilder(getContext()).host("1.34.243.17").path("DUT", "api", "BarData").toString();
+        //  String url = new URLBuilder(getContext()).host("1.34.243.17").path("DUT", "api", "BarData").toString();
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
