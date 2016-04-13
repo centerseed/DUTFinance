@@ -47,10 +47,10 @@ public class TradeFragment extends SyncFragment implements LoaderManager.LoaderC
     TextView mCurrency3;
     TextView mCurrency4;
 
-    PriceTextView mPriceEU;
-    PriceTextView mPriceGJ;
-    PriceTextView mPriceGU;
-    PriceTextView mPriceXU;
+    NewPriceText mPriceEU;
+    NewPriceText mPriceGJ;
+    NewPriceText mPriceGU;
+    NewPriceText mPriceXU;
 
     Uri mUri;
     private final OkHttpClient mClient = new OkHttpClient();
@@ -76,10 +76,18 @@ public class TradeFragment extends SyncFragment implements LoaderManager.LoaderC
         mCurrency3 = (TextView) view.findViewById(R.id.currency3);
         mCurrency4 = (TextView) view.findViewById(R.id.currency4);
 
-        mPriceEU = (PriceTextView) view.findViewById(R.id.priceEU);
-        mPriceGJ = (PriceTextView) view.findViewById(R.id.priceGJ);
-        mPriceGU = (PriceTextView) view.findViewById(R.id.priceGU);
-        mPriceXU = (PriceTextView) view.findViewById(R.id.priceXU);
+        mPriceEU = (NewPriceText) view.findViewById(R.id.priceEU);
+        mPriceEU.setLastPointNum(5);
+        mPriceEU.setTextSize(16);
+        mPriceGJ = (NewPriceText) view.findViewById(R.id.priceGJ);
+        mPriceGJ.setLastPointNum(3);
+        mPriceGJ.setTextSize(16);
+        mPriceGU = (NewPriceText) view.findViewById(R.id.priceGU);
+        mPriceGU.setLastPointNum(5);
+        mPriceGU.setTextSize(16);
+        mPriceXU = (NewPriceText) view.findViewById(R.id.priceXU);
+        mPriceXU.setLastPointNum(2);
+        mPriceXU.setTextSize(16);
     }
 
     @Override
@@ -146,6 +154,11 @@ public class TradeFragment extends SyncFragment implements LoaderManager.LoaderC
         getActivity().unregisterReceiver(mReceiver);
         stopStreaming();
         savePrice();
+
+        mPriceEU.setPrice(0);
+        mPriceGJ.setPrice(0);
+        mPriceGU.setPrice(0);
+        mPriceXU.setPrice(0);
     }
 
     @Override
@@ -277,7 +290,6 @@ public class TradeFragment extends SyncFragment implements LoaderManager.LoaderC
     }
 
     private void savePrice() {
-
         PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putFloat(mCurrency1.getText().toString(), (float) mPriceEU.getPrice()).commit();
         PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putFloat(mCurrency2.getText().toString(), (float) mPriceGJ.getPrice()).commit();
         PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putFloat(mCurrency3.getText().toString(), (float) mPriceGU.getPrice()).commit();

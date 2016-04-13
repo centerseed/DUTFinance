@@ -151,6 +151,9 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         stopRefresh();
+        mProfit.setText("0");
+        mProfit.setTextColor(getContext().getResources().getColor(R.color.colorPrimaryDark));
+
         if (mAdapter != null && cursor.moveToFirst()) {
             mAdapter.swapCursor(cursor);
 

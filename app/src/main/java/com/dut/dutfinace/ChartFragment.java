@@ -14,6 +14,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -48,13 +49,12 @@ public class ChartFragment extends Fragment implements LoaderManager.LoaderCallb
     private CandleStickChart mChart;
     YAxis mYAxis;
     XAxis mXAxis;
+    RadioGroup mRadioGroup;
 
-    private SeekBar mSeekBarX, mSeekBarY;
-    private TextView tvX, tvY;
     private TextView mName;
     Uri mUri;
 
-    String mBarType = "1";
+    String mBarInterval = "1";
     private final OkHttpClient mClient = new OkHttpClient();
 
     @Override
@@ -70,6 +70,24 @@ public class ChartFragment extends Fragment implements LoaderManager.LoaderCallb
         mName.setText(getCurrencyName());
         mChart = (CandleStickChart) view.findViewById(R.id.chart);
         mChart.setNoDataText("載入中...");
+        mRadioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
+
+        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.recentSixHour) {
+                    mBarInterval = "1";
+                } else if (checkedId == R.id.today) {
+                    mBarInterval = "2";
+                } else if (checkedId == R.id.threeDay) {
+                    mBarInterval = "3";
+                } else {
+                    mBarInterval = "4";
+                }
+                getLoaderManager().restartLoader(0, null, ChartFragment.this);
+                getChartData();
+            }
+        });
     }
 
     @Override
@@ -100,7 +118,7 @@ public class ChartFragment extends Fragment implements LoaderManager.LoaderCallb
         CursorLoader cl = new CursorLoader(getActivity());
         cl.setUri(mUri);
         cl.setSelection(MainProvider.FIELD_ID + "=? AND " + MainProvider.FIELD_CHART_INTERVAL + "=?");
-        cl.setSelectionArgs(new String[]{(getCurrencyName() + mBarType).hashCode() + "", mBarType});
+        cl.setSelectionArgs(new String[]{(getCurrencyName() + mBarInterval).hashCode() + "", mBarInterval});
         return cl;
     }
 
@@ -205,7 +223,7 @@ public class ChartFragment extends Fragment implements LoaderManager.LoaderCallb
                 "usersys_id", AccountUtils.getSysId(getContext()),
                 "session_id", AccountUtils.getToken(getContext()),
                 "currencyName", getCurrencyName(),
-                "barDataType", mBarType).build();
+                "barDataType", mBarInterval).build();
 
         RequestBody body = RequestBody.create(Const.JSON, json);
         String url = new URLBuilder(getContext()).host(R.string.host).path("DUT", "api", "BarData").toString();
@@ -225,9 +243,9 @@ public class ChartFragment extends Fragment implements LoaderManager.LoaderCallb
                 if (array == null) return;
 
                 ContentValues values = new ContentValues();
-                values.put(MainProvider.FIELD_ID, (getCurrencyName() + mBarType).hashCode());
+                values.put(MainProvider.FIELD_ID, (getCurrencyName() + mBarInterval).hashCode());
                 values.put(MainProvider.FIELD_CURRENCY_NAME, getCurrencyName());
-                values.put(MainProvider.FIELD_CHART_INTERVAL, mBarType);
+                values.put(MainProvider.FIELD_CHART_INTERVAL, mBarInterval);
                 values.put(MainProvider.FIELD_CHART_DATA, array.toString());
 
                 m_context.getContentResolver().insert(mUri, values);

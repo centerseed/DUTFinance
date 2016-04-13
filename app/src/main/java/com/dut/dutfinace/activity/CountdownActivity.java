@@ -19,7 +19,9 @@ import android.widget.Toast;
 import com.dut.dutfinace.AccountUtils;
 import com.dut.dutfinace.Const;
 import com.dut.dutfinace.CustomCircleProgressBar;
+import com.dut.dutfinace.DigitUtils;
 import com.dut.dutfinace.JSONBuilder;
+import com.dut.dutfinace.NewPriceText;
 import com.dut.dutfinace.PriceTextView;
 import com.dut.dutfinace.R;
 import com.dut.dutfinace.URLBuilder;
@@ -30,6 +32,7 @@ import com.dut.dutfinace.streaming.SocketClient;
 
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -47,7 +50,7 @@ public class CountdownActivity extends ToolbarActivity {
     TextView mExchangeRate;
     TextView mAmount;
     ImageView mDivider;
-    PriceTextView mPrice;
+    NewPriceText mPrice;
 
     int mColor;
     int mOrderID;
@@ -67,14 +70,15 @@ public class CountdownActivity extends ToolbarActivity {
         mAmount = (TextView) findViewById(R.id.amount);
         mProgressBackground = (FrameLayout) findViewById(R.id.progressBack);
         mDivider = (ImageView) findViewById(R.id.divider);
-        mPrice = (PriceTextView) findViewById(R.id.price);
+        mPrice = (NewPriceText) findViewById(R.id.price);
         mPrice.setTextSize(48);
 
         String name = getIntent().getStringExtra(OrderActivity.ARG_TARGET_NAME);
         mPrice.setPrice(PreferenceManager.getDefaultSharedPreferences(this).getFloat(name, 0));
         mName.setText(name);
+        mPrice.setLastPointNum(DigitUtils.getDigit(name));
 
-        mSide.setText(getIntent().getIntExtra(OrderActivity.ARG_SIDE, 0) == 0 ? "看漲" : "看跌");
+        mSide.setText(getIntent().getIntExtra(OrderActivity.ARG_SIDE, 0) == 1 ? "看漲" : "看跌");
         mExchangeRate.setText(getIntent().getDoubleExtra(OrderActivity.ARG_EXCHANGE_RATE, 1) + "");
         mAmount.setText(getIntent().getIntExtra(OrderActivity.ARG_AMOUNT, 10) + "");
 

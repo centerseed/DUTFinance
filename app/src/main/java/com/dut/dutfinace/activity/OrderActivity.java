@@ -20,7 +20,9 @@ import android.widget.Toast;
 import com.dut.dutfinace.AccountUtils;
 import com.dut.dutfinace.Const;
 import com.dut.dutfinace.CustomCircleProgressBar;
+import com.dut.dutfinace.DigitUtils;
 import com.dut.dutfinace.JSONBuilder;
+import com.dut.dutfinace.NewPriceText;
 import com.dut.dutfinace.PriceTextView;
 import com.dut.dutfinace.R;
 import com.dut.dutfinace.URLBuilder;
@@ -52,7 +54,7 @@ public class OrderActivity extends ToolbarActivity {
     public static final int SIDE_DOWN = 2;
 
     TextView mCurrency;
-    PriceTextView mPrice;
+    NewPriceText mPrice;
     EditText mAmount;
     String mName;
     String mId;
@@ -64,13 +66,14 @@ public class OrderActivity extends ToolbarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activiy_order);
         mCurrency = (TextView) findViewById(R.id.currency);
-        mPrice = (PriceTextView) findViewById(R.id.price);
+        mPrice = (NewPriceText) findViewById(R.id.price);
         mPrice.setTextSize(48);
         mAmount = (EditText) findViewById(R.id.amount);
 
         mName = getIntent().getStringExtra(ARG_TARGET_NAME);
         mId = getIntent().getStringExtra(ARG_TARGET_ID);
         mCurrency.setText(mName);
+        mPrice.setLastPointNum(DigitUtils.getDigit(mName));
         mPrice.setPrice(PreferenceManager.getDefaultSharedPreferences(this).getFloat(mName, 0));
     }
 
