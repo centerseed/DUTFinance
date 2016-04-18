@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -34,14 +35,13 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
 
     Uri mUri;
     HistoryAdapter mAdapter;
-    Spinner mSpinner;
     TextView mProfitTitle;
     TextView mProfit;
     protected RecyclerView mRecyclerView;
     private final OkHttpClient mClient = new OkHttpClient();
 
-    private String[] interval = {"ㄧ日", "一週", "ㄧ月"};
     int mInterval = 1;
+    RadioGroup mRadioGroup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -71,23 +71,24 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
             mRecyclerView.setAdapter(mAdapter);
         }
 
-        mSpinner = (Spinner) view.findViewById(R.id.spinner);
-        ArrayAdapter<String> lunchList = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, interval);
-        mSpinner.setAdapter(lunchList);
+        mRadioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
 
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mInterval = i + 1;
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.day) {
+                    mInterval = 1;
+                    mProfitTitle.setText("本日收益：");
+                }
+                if (checkedId == R.id.week) {
+                    mInterval = 2;
+                    mProfitTitle.setText("本週收益：");
+                }
+                if (checkedId == R.id.month) {
+                    mInterval = 3;
+                    mProfitTitle.setText("本月收益：");
+                }
                 onSync();
-                if (mInterval == 1) mProfitTitle.setText("本日收益：");
-                if (mInterval == 2) mProfitTitle.setText("本週收益：");
-                if (mInterval == 3) mProfitTitle.setText("本月收益：");
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
     }

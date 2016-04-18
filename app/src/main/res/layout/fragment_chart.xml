@@ -11,12 +11,15 @@
         android:id="@+id/name"
         android:layout_gravity="center_horizontal" />
 
-    <RadioGroup
+    <info.hoang8f.android.segmented.SegmentedGroup
+        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="4dp"
-        android:id="@+id/radioGroup">
+        android:id="@+id/radioGroup"
+        segmentedgroup:sc_tint_color="@color/colorWhite"
+        segmentedgroup:sc_checked_text_color="@color/colorPrimaryDark">
 
         <RadioButton
             android:layout_width="0dp"
@@ -69,7 +72,7 @@
             android:gravity="center"
             android:paddingTop="4dp"
             android:paddingBottom="4dp" />
-    </RadioGroup>
+    </info.hoang8f.android.segmented.SegmentedGroup>
 
     <com.github.mikephil.charting.charts.CandleStickChart
         android:layout_width="match_parent"

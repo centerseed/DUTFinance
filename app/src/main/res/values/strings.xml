@@ -33,9 +33,9 @@
     <string name="prompt_gender">性別</string>
 
     <!-- Common -->
-    <string name="title_account">賬戶</string>
-    <string name="title_trade">下單</string>
-    <string name="title_history">歷史</string>
+    <string name="title_account">概要</string>
+    <string name="title_trade">交易</string>
+    <string name="title_history">歷史紀錄</string>
 
     <!-- Profile -->
     <string name="title_available_fund">餘額</string>
@@ -48,7 +48,7 @@
     <string name="title_look_up">看漲</string>
     <string name="title_look_down">看跌</string>
     <string name="title_use_fund">投入資金</string>
-    <string name="title_profit_rate">獲利比率</string>
+    <string name="title_profit_rate">獲利比例(賠率):75%</string>
     <string name="title_activity_register">RegisterActivity</string>
 
     <!-- NetError -->

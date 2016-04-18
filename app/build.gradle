@@ -31,4 +31,5 @@ dependencies {
     compile 'com.mikhaellopez:circularprogressbar:1.1.0'
     compile 'com.squareup.okhttp3:okhttp:3.0.1'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.3'
+    compile 'info.hoang8f:android-segmented:1.0.6'
 }

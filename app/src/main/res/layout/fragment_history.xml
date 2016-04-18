@@ -3,14 +3,57 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Spinner
+    <info.hoang8f.android.segmented.SegmentedGroup
+        xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_marginRight="@dimen/margin_normal"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginBottom="@dimen/margin_small" />
+        android:orientation="horizontal"
+        android:id="@+id/radioGroup"
+        segmentedgroup:sc_tint_color="@color/colorWhite"
+        segmentedgroup:sc_checked_text_color="@color/colorPrimaryDark"
+        android:layout_margin="4dp">
+
+        <RadioButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="本日"
+            android:id="@+id/day"
+            android:button="@color/colorTransparent"
+            android:background="@drawable/radio_interval"
+            android:checked="true"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" />
+
+        <RadioButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="本週"
+            android:id="@+id/week"
+            android:button="@color/colorTransparent"
+            android:background="@drawable/radio_interval"
+            android:checked="false"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" />
+
+        <RadioButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="本月"
+            android:id="@+id/month"
+            android:button="@color/colorTransparent"
+            android:background="@drawable/radio_interval"
+            android:checked="false"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" />
+
+    </info.hoang8f.android.segmented.SegmentedGroup>
+
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"

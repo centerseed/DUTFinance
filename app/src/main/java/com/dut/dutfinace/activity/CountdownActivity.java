@@ -187,7 +187,7 @@ public class CountdownActivity extends ToolbarActivity {
                         if (result.equals("2"))
                             mSecond.setText("Lose");
                         if (result.equals("3"))
-                            mSecond.setText("賠");
+                            mSecond.setText("Tie");
                     }
                 });
             }
