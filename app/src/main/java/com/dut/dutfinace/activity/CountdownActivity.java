@@ -4,17 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dut.dutfinace.AccountUtils;
 import com.dut.dutfinace.Const;
@@ -22,19 +19,13 @@ import com.dut.dutfinace.CustomCircleProgressBar;
 import com.dut.dutfinace.DigitUtils;
 import com.dut.dutfinace.JSONBuilder;
 import com.dut.dutfinace.NewPriceText;
-import com.dut.dutfinace.PriceTextView;
 import com.dut.dutfinace.R;
 import com.dut.dutfinace.URLBuilder;
-import com.dut.dutfinace.activity.ToolbarActivity;
 import com.dut.dutfinace.network.AsyncResponseParser;
 import com.dut.dutfinace.streaming.CurrencyService;
 import com.dut.dutfinace.streaming.SocketClient;
 
 import org.json.JSONObject;
-
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -126,6 +117,7 @@ public class CountdownActivity extends ToolbarActivity {
 
         new CountDownTimer((countDownConst + 2) * 1000, 1000) {
             int second = countDownConst;
+
             @Override
             public void onFinish() {
                 mCircularProgressBar.setProgress(100);
@@ -138,7 +130,7 @@ public class CountdownActivity extends ToolbarActivity {
                 int progress = countDownConst - second;
                 Log.e("OrderActivity", "progress -> " + progress);
 
-                mCircularProgressBar.setProgress(progress * 100/countDownConst);
+                mCircularProgressBar.setProgress(progress * 100 / countDownConst);
                 mSecond.setText(second-- + "");
             }
 
@@ -190,7 +182,12 @@ public class CountdownActivity extends ToolbarActivity {
                         int amount = obj.optInt("invest_amount");
                         String completed = obj.optString("isCompleted");
 
-                        mSecond.setText(result.equals("1")? "賺" : "賠");
+                        if (result.equals("1"))
+                            mSecond.setText("Win");
+                        if (result.equals("2"))
+                            mSecond.setText("Lose");
+                        if (result.equals("3"))
+                            mSecond.setText("賠");
                     }
                 });
             }

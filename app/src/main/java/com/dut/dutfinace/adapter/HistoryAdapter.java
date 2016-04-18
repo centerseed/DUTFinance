@@ -37,7 +37,14 @@ public class HistoryAdapter extends AbstractRecyclerCursorAdapter {
         vh.name.setText(getCurrencyName(cursor.getInt(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_ID))));
         vh.startTime.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_START_TIME)));
         vh.rate.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_END_PRICE)));
-        vh.result.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_INVEST_RESULT)).equals("1") ? "獲利" : "虧損");
+
+        String result = cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_INVEST_RESULT));
+        if (result.equals("1"))
+            vh.result.setText("獲利");
+        if (result.equals("2"))
+        vh.result.setText("虧損");
+        if (result.equals("3"))
+            vh.result.setText("平手");
     }
 
     @Override

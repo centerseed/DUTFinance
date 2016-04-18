@@ -163,6 +163,7 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
                 double amount = cursor.getInt(cursor.getColumnIndex(MainProvider.FIELD_INVEST_AMOUNT));
                 if (result.equals("1")) amount = amount * 0.75;
                 if (result.equals("2")) amount = amount * -1;
+                if (result.equals("3")) amount = 0;
                 profit += amount;
                 cursor.moveToNext();
             }
