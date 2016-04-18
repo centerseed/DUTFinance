@@ -35,7 +35,7 @@ public class HistoryAdapter extends AbstractRecyclerCursorAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
         HistoryViewHolder vh = (HistoryViewHolder) viewHolder;
         vh.name.setText(getCurrencyName(cursor.getInt(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_ID))));
-        vh.startTime.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_START_TIME)));
+        vh.startTime.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_INVEST_ID)));
         vh.rate.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_END_PRICE)));
 
         String result = cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_INVEST_RESULT));
