@@ -72,7 +72,6 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
         }
 
         mRadioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
-
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -91,6 +90,7 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
                 onSync();
             }
         });
+        mProfitTitle.setText("本日收益：");
     }
 
     @Override
@@ -155,7 +155,7 @@ public class HistoryFragment extends SyncFragment implements LoaderManager.Loade
         mProfit.setText("0");
         mProfit.setTextColor(getContext().getResources().getColor(R.color.colorPrimaryDark));
 
-        if (mAdapter != null && cursor.moveToFirst()) {
+        if (mAdapter != null && cursor != null && cursor.moveToFirst()) {
             mAdapter.swapCursor(cursor);
 
             double profit = 0;

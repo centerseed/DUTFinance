@@ -3,13 +3,23 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="40dp"
+        android:id="@+id/targetImage"
+        android:layout_gravity="center_vertical"
+        android:scaleType="fitStart"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="8dp" />
+
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="name"
         android:id="@+id/name"
-        android:layout_weight="0.6" />
+        android:layout_weight="0.6"
+        android:layout_gravity="center_vertical" />
 
     <TextView
         android:layout_width="0dp"
@@ -17,7 +27,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="time"
         android:id="@+id/time"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical" />
 
     <TextView
         android:layout_width="0dp"
@@ -26,12 +37,14 @@
         android:text="1.0"
         android:id="@+id/rate"
         android:layout_weight="1"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_gravity="center_vertical" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="result"
-        android:id="@+id/result" />
+        android:id="@+id/result"
+        android:layout_gravity="center_vertical" />
 </LinearLayout>

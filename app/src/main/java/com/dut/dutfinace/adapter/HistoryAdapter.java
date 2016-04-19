@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dut.dutfinace.R;
@@ -34,7 +35,8 @@ public class HistoryAdapter extends AbstractRecyclerCursorAdapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
         HistoryViewHolder vh = (HistoryViewHolder) viewHolder;
-        vh.name.setText(getCurrencyName(cursor.getInt(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_ID))));
+        String name = getCurrencyName(cursor.getInt(cursor.getColumnIndex(MainProvider.FIELD_CURRENCY_ID)));
+        vh.name.setText(name);
         vh.startTime.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_INVEST_ID)));
         vh.rate.setText(cursor.getString(cursor.getColumnIndex(MainProvider.FIELD_END_PRICE)));
 
@@ -45,6 +47,19 @@ public class HistoryAdapter extends AbstractRecyclerCursorAdapter {
         vh.result.setText("虧損");
         if (result.equals("3"))
             vh.result.setText("平手");
+
+        if ("EUR-USD".equals(name)) {
+            vh.target.setImageResource(R.drawable.eupusd);
+        }
+        if ("GBP-JPY".equals(name)) {
+            vh.target.setImageResource(R.drawable.gbpjpy);
+        }
+        if ("GBP-USD".equals(name)) {
+            vh.target.setImageResource(R.drawable.gbpusd);
+        }
+        if ("XAU-USD".equals(name)) {
+            vh.target.setImageResource(R.drawable.usexau);
+        }
     }
 
     @Override
@@ -59,6 +74,7 @@ public class HistoryAdapter extends AbstractRecyclerCursorAdapter {
         TextView startTime;
         TextView rate;
         TextView result;
+        ImageView target;
 
         public HistoryViewHolder(View itemView) {
             super(itemView);
@@ -66,6 +82,7 @@ public class HistoryAdapter extends AbstractRecyclerCursorAdapter {
             startTime = (TextView) itemView.findViewById(R.id.time);
             rate = (TextView) itemView.findViewById(R.id.rate);
             result = (TextView) itemView.findViewById(R.id.result);
+            target = (ImageView) itemView.findViewById(R.id.targetImage);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
